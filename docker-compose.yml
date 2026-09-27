@@ -3,7 +3,7 @@ services:
     image: pawarvaishnavi/asset-tracker-frontend:multistage
     container_name: asset-tracker-frontend
     ports:
-      - "5173:5173"
+      - "${FRONTEND_HOST_PORT}:5173"
     restart: unless-stopped
     depends_on:
       - backend
@@ -16,14 +16,14 @@ services:
     image: pawarvaishnavi/asset-tracker-backend:multistage
     container_name: asset-tracker-backend
     ports:
-      - "5000:5000"
+      - "${BACKEND_HOST_PORT}:${BACKEND_PORT}"
     environment:
-      PORT: 5000
+      PORT: ${BACKEND_PORT}
       DB_USER: ${POSTGRES_USER}
-      DB_HOST: postgres
+      DB_HOST: ${POSTGRES_HOST}
       DB_NAME: ${POSTGRES_DB}
       DB_PASSWORD: ${POSTGRES_PASSWORD}
-      DB_PORT: 5432
+      DB_PORT: ${POSTGRES_PORT}
     restart: unless-stopped
     depends_on:
       postgres:
@@ -41,10 +41,10 @@ services:
       POSTGRES_USER: ${POSTGRES_USER}
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
     ports:
-      - "5430:5432"
+      - "${POSTGRES_HOST_PORT}:${POSTGRES_PORT}"
     volumes:
       - postgres_data:/var/lib/postgresql/data
-      - ./backend/init/postgres:/docker-entrypoint-initdb.d:ro
+      - ./backend/init/postgres:/docker-entrypoint-initdb.d
     restart: unless-stopped
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER} -d ${POSTGRES_DB}"]

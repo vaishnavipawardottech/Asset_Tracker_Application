@@ -20,6 +20,9 @@ COPY --from=builder /app/node_modules ./node_modules
 COPY --from=builder /app/package*.json ./
 COPY --from=builder /app ./
 
+# DHI image runs as nonroot by default
+USER nonroot
+
 EXPOSE 5000
 
 CMD ["node", "src/server.js"]
