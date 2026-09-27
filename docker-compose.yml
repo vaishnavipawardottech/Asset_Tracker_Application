@@ -1,6 +1,9 @@
 services:
   frontend:
-    image: pawarvaishnavi/asset-tracker-frontend:multistage
+    # image: pawarvaishnavi/asset-tracker-frontend:multistage
+    build: 
+      context: ./frontend
+      dockerfile: Dockerfile.multistage
     container_name: asset-tracker-frontend
     ports:
       - "${FRONTEND_HOST_PORT}:5173"
@@ -13,7 +16,10 @@ services:
   
 
   backend:
-    image: pawarvaishnavi/asset-tracker-backend:multistage
+    # image: pawarvaishnavi/asset-tracker-backend:multistage
+    build: 
+      context: ./backend
+      dockerfile: Dockerfile.multistage
     container_name: asset-tracker-backend
     ports:
       - "${BACKEND_HOST_PORT}:${BACKEND_PORT}"
