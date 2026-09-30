@@ -1,0 +1,17 @@
+kind: Service
+apiVersion: v1
+metadata:
+  name: frontend
+  namespace: asset-tracker-ns
+
+spec:
+  selector:
+    app: asset-tracker-fe
+
+  ports:
+    - protocol: TCP
+      port: 80
+      targetPort: 5173  # container port
+      nodePort: 30001
+  type: NodePort
+
