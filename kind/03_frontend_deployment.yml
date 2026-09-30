@@ -1,0 +1,23 @@
+kind: Deployment
+apiVersion: apps/v1
+metadata:
+  name: frontend-deployment
+  labels:
+    app: asset-tracker-fe
+    namespace: asset-tracker-ns
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: asset-tracker-fe
+  template:
+    metadata:
+      labels:
+        app: asset-tracker-fe
+    spec:
+      containers:
+      - name: asset-tracker-frontend
+        image: pawarvaishnavi/asset-tracker-frontend:v3
+        ports:
+        - containerPort: 5173
+
