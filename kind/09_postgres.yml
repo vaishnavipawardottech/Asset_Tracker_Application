@@ -1,0 +1,66 @@
+kind: StatefulSet
+apiVersion: apps/v1
+metadata:
+  name: postgres
+  namespace: asset-tracker-ns
+  labels:
+    app: asset-tracker-postgres
+
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: asset-tracker-postgres
+  serviceName: postgres
+  template:
+    metadata:
+      labels:
+        app: asset-tracker-postgres
+
+    spec:
+      containers:
+      - name: postgres
+        image: postgres:17-alpine
+        ports:
+        - containerPort: 5432
+          name: postgres
+        volumeMounts:
+        - name: pgdata
+          mountPath: /var/lib/postgresql/data
+        - name: postgres-init
+          mountPath: /docker-entrypoint-initdb.d
+        env:
+          - name: POSTGRES_USER
+            valueFrom:
+              configMapKeyRef:
+               name: asset-tracker-configmap
+               key: POSTGRES_USER
+          - name: POSTGRES_PASSWORD
+            valueFrom:
+              secretKeyRef:
+                name: asset-tracker-secrets
+                key: POSTGRES_PASSWORD
+          - name: POSTGRES_DB
+            valueFrom:
+              configMapKeyRef:
+                name: asset-tracker-configmap
+                key: POSTGRES_DB
+        readinessProbe:
+          exec:
+            command:
+              - /bin/sh
+              - -c
+              - pg_isready -U "$POSTGRES_USER" -d "$POSTGRES_DB"
+      volumes:
+        - name: postgres-init
+          configMap:
+            name: postgres-init
+  volumeClaimTemplates:
+  - metadata:
+      name: pgdata
+    spec:
+      accessModes: [ "ReadWriteOnce" ]
+      storageClassName: "manual"
+      resources:
+        requests:
+          storage: 0.5Gi
