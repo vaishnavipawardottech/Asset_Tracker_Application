@@ -1,0 +1,25 @@
+kind: ConfigMap
+apiVersion: v1
+metadata:
+  name: postgres-init
+  namespace: asset-tracker-ns
+data:
+  01_initdb.sql: |
+    CREATE TABLE IF NOT EXISTS assets (
+        id SERIAL PRIMARY KEY,
+        name VARCHAR(100) NOT NULL,
+        type VARCHAR(50) NOT NULL,
+        serial_number VARCHAR(100) UNIQUE NOT NULL,
+        assigned_to VARCHAR(100),
+        status VARCHAR(30) NOT NULL,
+        purchase_date DATE,
+        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+    );
+
+  02_seed.sql: |
+    INSERT INTO assets
+        (name, type, serial_number, assigned_to, status, purchase_date)
+    VALUES
+        ('Dell Latitude 5440', 'Laptop', 'DL-001', 'Vaishnavi', 'Assigned', '2026-01-15'),
+        ('HP Monitor', 'Monitor', 'HP-001', 'Amit', 'Assigned', '2026-02-10'),
+        ('Server-01', 'Server', 'SRV-001', NULL, 'Available', '2026-03-05');
