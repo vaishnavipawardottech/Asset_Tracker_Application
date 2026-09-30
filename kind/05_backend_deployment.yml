@@ -1,0 +1,50 @@
+kind: Deployment
+apiVersion: apps/v1
+metadata:
+  name: backend-deployment
+  labels:
+    app: asset-tracker-be
+    namespace: asset-tracker-ns
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: asset-tracker-be
+  template:
+    metadata:
+      labels:
+        app: asset-tracker-be
+    spec:
+      containers:
+      - name: asset-tracker-backend
+        image: pawarvaishnavi/asset-tracker-backend:v3
+        ports:
+        - containerPort: 5000
+        env:
+          - name: DB_PASSWORD
+            valueFrom:
+              secretKeyRef:
+                name: asset-tracker-secrets
+                key: DB_PASSWORD
+          - name: DB_USER
+            valueFrom:
+              configMapKeyRef:
+                name: asset-tracker-configmap
+                key: DB_USER
+          - name: DB_NAME
+            valueFrom:
+              configMapKeyRef:
+                name: asset-tracker-configmap
+                key: DB_NAME
+          - name: DB_HOST
+            valueFrom:
+              configMapKeyRef:
+                name: asset-tracker-configmap
+                key: DB_HOST
+          - name: DB_PORT
+            valueFrom:
+              configMapKeyRef:
+                name: asset-tracker-configmap
+                key: DB_PORT
+
+
