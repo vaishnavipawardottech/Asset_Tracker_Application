@@ -1,0 +1,14 @@
+kind: ConfigMap
+apiVersion: v1
+metadata:
+  name: asset-tracker-configmap
+  namespace: asset-tracker-ns
+
+data:
+  DB_USER: postgres
+  DB_NAME: asset_tracker
+  DB_HOST: postgres
+  DB_PORT: "5432"
+
+  POSTGRES_USER: postgres
+  POSTGRES_DB: asset_tracker
