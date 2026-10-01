@@ -47,4 +47,38 @@ spec:
                 name: asset-tracker-configmap
                 key: DB_PORT
 
+        resources:
+          requests:
+            cpu: "100m"
+            memory: "128Mi"
+          limits:
+            cpu: "200m"
+            memory: "256Mi"
+
+        startupProbe:
+            httpGet:
+              path: /health
+              port: 5000
+            periodSeconds: 5
+            timeoutSeconds: 2
+            failureThreshold: 24
+
+        readinessProbe:
+            httpGet:
+              path: /health
+              port: 5000
+            initialDelaySeconds: 5
+            periodSeconds: 10
+            timeoutSeconds: 2
+            failureThreshold: 3 
+
+        livenessProbe:
+            httpGet:
+              path: /health
+              port: 5000
+            initialDelaySeconds: 5
+            periodSeconds: 10
+            timeoutSeconds: 2
+            failureThreshold: 3
+
 
