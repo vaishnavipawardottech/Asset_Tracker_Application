@@ -1,8 +1,8 @@
-kind: HorizontalPodAutoscalar
+kind: HorizontalPodAutoscaler
 apiVersion: autoscaling/v2
 metadata:
   name: frontend-hpa
-  namespace: devboard
+  namespace: asset-tracker-ns
 spec:
   scaleTargetRef:
     apiVersion: apps/v1
@@ -16,11 +16,18 @@ spec:
         name: cpu
         target:
           type: Utilization
-          averageUtilization: 70
-  behavior:
-  scaleUp:
-    stabilizationWindowSeconds: 10
-    policies:
-      - type: Pods
-        value: 2
-        periodSeconds: 10
+          averageUtilization: 5
+  # behavior:
+  # scaleUp:
+  #   stabilizationWindowSeconds: 10
+  #   policies:
+  #     - type: Pods
+  #       value: 2
+  #       periodSeconds: 10
+
+
+
+  # kubectl apply -f frontend_hpa.yml
+  # kubectl get hpa -n asset-tracker-ns
+  # kubectl run -i --tty load-generator --image=busybox -n asset-tracker-ns /bin/sh
+  # while true; do wget -q -O- http://frontend-service.asset-tracker-ns.svc.cluster.local; done
