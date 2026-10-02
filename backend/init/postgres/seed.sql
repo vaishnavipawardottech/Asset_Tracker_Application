@@ -1,3 +1,13 @@
+CREATE EXTENSION IF NOT EXISTS pgcrypto;
+
+INSERT INTO users (email, password_hash)
+VALUES (
+    'pawarvaishnavi.3010@gmail.com',
+    crypt('vaishnavi@test', gen_salt('bf', 12))
+)
+ON CONFLICT (email) DO NOTHING;
+
+
 INSERT INTO assets
     (name, type, serial_number, assigned_to, status, purchase_date)
 VALUES
