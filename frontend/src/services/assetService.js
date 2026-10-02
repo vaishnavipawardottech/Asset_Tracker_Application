@@ -1,7 +1,29 @@
 const API_URL = "/api/assets";
 
+
+const getAuthHeaders = () => {
+    const token = localStorage.getItem("accessToken");
+
+    return {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`
+    };
+};
+
 export const getAssets = async () => {
-    const response = await fetch(API_URL);
+    const response = await fetch(API_URL, {
+        headers: getAuthHeaders()
+    });
+
+    if (response.status === 401) {
+        localStorage.removeItem("accessToken");
+        localStorage.removeItem("refreshToken");
+        localStorage.removeItem("user");
+
+        window.location.href = "/login";
+
+        return;
+    }
 
     if (!response.ok) {
         throw new Error("Failed to fetch assets");
@@ -11,7 +33,15 @@ export const getAssets = async () => {
 };
 
 export const getAssetById = async (id) => {
-    const response = await fetch(`${API_URL}/${id}`);
+    const response = await fetch(`${API_URL}/${id}`, {
+        headers: getAuthHeaders()
+    });
+
+    if (response.status === 401) {
+        localStorage.clear();
+        window.location.href = "/login";
+        return;
+    }
 
     if (!response.ok) {
         throw new Error("Failed to fetch asset");
@@ -23,11 +53,15 @@ export const getAssetById = async (id) => {
 export const createAsset = async (asset) => {
     const response = await fetch(API_URL, {
         method: "POST",
-        headers: {
-            "Content-Type": "application/json"
-        },
+        headers: getAuthHeaders(),
         body: JSON.stringify(asset)
     });
+
+    if (response.status === 401) {
+        localStorage.clear();
+        window.location.href = "/login";
+        return;
+    }
 
     if (!response.ok) {
         throw new Error("Failed to create asset");
@@ -39,11 +73,15 @@ export const createAsset = async (asset) => {
 export const updateAsset = async (id, asset) => {
     const response = await fetch(`${API_URL}/${id}`, {
         method: "PUT",
-        headers: {
-            "Content-Type": "application/json"
-        },
+        headers: getAuthHeaders(),
         body: JSON.stringify(asset)
     });
+
+    if (response.status === 401) {
+        localStorage.clear();
+        window.location.href = "/login";
+        return;
+    }
 
     if (!response.ok) {
         throw new Error("Failed to update asset");
@@ -54,8 +92,15 @@ export const updateAsset = async (id, asset) => {
 
 export const deleteAsset = async (id) => {
     const response = await fetch(`${API_URL}/${id}`, {
-        method: "DELETE"
+        method: "DELETE",
+        headers: getAuthHeaders()
     });
+
+    if (response.status === 401) {
+        localStorage.clear();
+        window.location.href = "/login";
+        return;
+    }
 
     if (!response.ok) {
         throw new Error("Failed to delete asset");
