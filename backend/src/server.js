@@ -3,6 +3,7 @@ import cors from "cors";
 import dotenv from "dotenv";
 
 import assetRoutes from "./routes/assetRoutes.js";
+import authRoutes from "./routes/authRoutes.js";
 
 dotenv.config();
 
@@ -25,7 +26,9 @@ app.get("/health", (req, res) => {
   });
 });
 
-
+// Authentication APIs
+app.use("/api/auth", authRoutes);
+// Asset APIs
 app.use("/api/assets", assetRoutes);
 
 const PORT = process.env.PORT || 5000;
