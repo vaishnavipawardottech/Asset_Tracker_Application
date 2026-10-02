@@ -1,9 +1,20 @@
 import { useEffect, useState } from "react";
+import {
+    BrowserRouter,
+    Routes,
+    Route,
+    Navigate,
+    useNavigate
+} from "react-router-dom";
 
 import Navbar from "./components/Navbar";
 import Dashboard from "./pages/Dashboard";
 import Assets from "./pages/Assets";
 import AssetForm from "./components/AssetForm";
+
+import Login from "./pages/Login";
+import Register from "./pages/Register";
+import ProtectedRoute from "./components/ProtectedRoute";
 
 import {
     getAssets,
@@ -12,10 +23,12 @@ import {
     deleteAsset
 } from "./services/assetService";
 
-function App() {
+function AssetTracker() {
     const [assets, setAssets] = useState([]);
     const [loading, setLoading] = useState(true);
     const [editingAsset, setEditingAsset] = useState(null);
+
+    const navigate = useNavigate();
 
     const loadAssets = async () => {
         try {
@@ -28,22 +41,8 @@ function App() {
         }
     };
 
-    // useEffect(() => {
-    //     loadAssets();
-    // }, []);
     useEffect(() => {
-        const fetchAssets = async () => {
-            try {
-                const data = await getAssets();
-                setAssets(data);
-            } catch (error) {
-                console.error(error);
-            } finally {
-                setLoading(false);
-            }
-        };
-
-        fetchAssets();
+        loadAssets();
     }, []);
 
     const handleAddAsset = async (asset) => {
@@ -132,6 +131,59 @@ function App() {
                 </div>
             </main>
         </>
+    );
+}
+
+function AppRoutes() {
+    return (
+        <Routes>
+            <Route
+                path="/login"
+                element={<Login />}
+            />
+
+            <Route
+                path="/register"
+                element={<Register />}
+            />
+
+            <Route
+                path="/dashboard"
+                element={
+                    <ProtectedRoute>
+                        <AssetTracker />
+                    </ProtectedRoute>
+                }
+            />
+
+            <Route
+                path="/"
+                element={
+                    <Navigate
+                        to="/dashboard"
+                        replace
+                    />
+                }
+            />
+
+            <Route
+                path="*"
+                element={
+                    <Navigate
+                        to="/dashboard"
+                        replace
+                    />
+                }
+            />
+        </Routes>
+    );
+}
+
+function App() {
+    return (
+        <BrowserRouter>
+            <AppRoutes />
+        </BrowserRouter>
     );
 }
 
