@@ -1,20 +1,30 @@
 import pool from "../config/db.js";
 
 // Get all assets
-export const getAssets = async (req, res) => {
-    try {
-        const result = await pool.query(
-            "SELECT * FROM assets ORDER BY id DESC"
-        );
+export const getAllAssets = async (req, res) => {
+  try {
+    const result = await pool.query(`
+      SELECT
+        a.*,
+        e.name AS employee_name
+      FROM assets a
+      LEFT JOIN employees e
+        ON a.employee_id = e.id
+      ORDER BY a.id DESC
+    `);
 
-        res.status(200).json(result.rows);
-    } catch (error) {
-        console.error(error);
+    return res.status(200).json({
+      success: true,
+      assets: result.rows,
+    });
+  } catch (error) {
+    console.error("Error fetching assets:", error);
 
-        res.status(500).json({
-            message: "Failed to fetch assets"
-        });
-    }
+    return res.status(500).json({
+      success: false,
+      message: "Failed to fetch assets",
+    });
+  }
 };
 
 // Get asset by ID
@@ -44,40 +54,117 @@ export const getAssetById = async (req, res) => {
 };
 
 // Create asset
+// export const createAsset = async (req, res) => {
+//     try {
+//         const {
+//             name,
+//             type,
+//             serial_number,
+//             assigned_to,
+//             status,
+//             purchase_date
+//         } = req.body;
+
+//         const result = await pool.query(
+//             `INSERT INTO assets
+//             (name, type, serial_number, assigned_to, status, purchase_date)
+//             VALUES ($1, $2, $3, $4, $5, $6)
+//             RETURNING *`,
+//             [
+//                 name,
+//                 type,
+//                 serial_number,
+//                 assigned_to,
+//                 status,
+//                 purchase_date
+//             ]
+//         );
+
+//         res.status(201).json(result.rows[0]);
+//     } catch (error) {
+//         console.error(error);
+
+//         res.status(500).json({
+//             message: "Failed to create asset"
+//         });
+//     }
+// };
+
+// create asset with optional employee assignment
 export const createAsset = async (req, res) => {
-    try {
-        const {
-            name,
-            type,
-            serial_number,
-            assigned_to,
-            status,
-            purchase_date
-        } = req.body;
+  try {
+    const {
+      asset_name,
+      asset_type,
+      purchase_date,
+      employee_id,
+      status,
+    } = req.body;
 
-        const result = await pool.query(
-            `INSERT INTO assets
-            (name, type, serial_number, assigned_to, status, purchase_date)
-            VALUES ($1, $2, $3, $4, $5, $6)
-            RETURNING *`,
-            [
-                name,
-                type,
-                serial_number,
-                assigned_to,
-                status,
-                purchase_date
-            ]
-        );
-
-        res.status(201).json(result.rows[0]);
-    } catch (error) {
-        console.error(error);
-
-        res.status(500).json({
-            message: "Failed to create asset"
-        });
+    if (!asset_name || !asset_type) {
+      return res.status(400).json({
+        success: false,
+        message: "Asset name and asset type are required",
+      });
     }
+
+    // Validate employee if one is selected
+    let assignedEmployeeId = null;
+
+    if (
+      employee_id !== undefined &&
+      employee_id !== null &&
+      employee_id !== ""
+    ) {
+      const employeeResult = await pool.query(
+        "SELECT id FROM employees WHERE id = $1",
+        [employee_id]
+      );
+
+      if (employeeResult.rows.length === 0) {
+        return res.status(404).json({
+          success: false,
+          message: "Selected employee does not exist",
+        });
+      }
+
+      assignedEmployeeId = employeeResult.rows[0].id;
+    }
+
+    // Set status based on assignment
+    const assetStatus = assignedEmployeeId
+      ? "Assigned"
+      : status === "Maintenance"
+      ? "Maintenance"
+      : "Available";
+
+    const result = await pool.query(
+      `INSERT INTO assets
+        (asset_name, asset_type, purchase_date, employee_id, status)
+       VALUES ($1, $2, $3, $4, $5)
+       RETURNING *`,
+      [
+        asset_name,
+        asset_type,
+        purchase_date || null,
+        assignedEmployeeId,
+        assetStatus,
+      ]
+    );
+
+    return res.status(201).json({
+      success: true,
+      message: "Asset created successfully",
+      asset: result.rows[0],
+    });
+  } catch (error) {
+    console.error("Error creating asset:", error);
+
+    return res.status(500).json({
+      success: false,
+      message: "Failed to create asset",
+    });
+  }
 };
 
 // Update asset
