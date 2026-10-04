@@ -1,25 +1,483 @@
-import AssetTable from "../components/AssetTable";
+import { useEffect, useState } from "react";
+import { Link } from "react-router-dom";
+import {
+    Plus,
+    Package,
+    CalendarDays,
+    UserRound,
+    Pencil,
+    X,
+    Save,
+} from "lucide-react";
 
-function Assets({ assets, onDelete, onEdit }) {
+import { getAssets, updateAsset } from "../services/assetService";
+import StatusBadge from "../components/StatusBadge";
+
+const Assets = () => {
+    const [assets, setAssets] = useState([]);
+    const [loading, setLoading] = useState(true);
+    const [error, setError] = useState("");
+
+    const [selectedAsset, setSelectedAsset] = useState(null);
+    const [formData, setFormData] = useState({});
+    const [saving, setSaving] = useState(false);
+    const [saveError, setSaveError] = useState("");
+
+    const fetchAssets = async () => {
+        try {
+            setLoading(true);
+            setError("");
+
+            const response = await getAssets();
+
+            const assetList = Array.isArray(response)
+                ? response
+                : response?.assets || response?.data?.assets || [];
+
+            setAssets(assetList);
+        } catch (err) {
+            setError(err.message || "Failed to load assets");
+        } finally {
+            setLoading(false);
+        }
+    };
+
+    useEffect(() => {
+        fetchAssets();
+    }, []);
+
+    const handleEdit = (asset) => {
+        setSelectedAsset(asset);
+
+        setFormData({
+            name: asset.name || asset.asset_name || "",
+            type: asset.type || asset.asset_type || "",
+            serial_number: asset.serial_number || "",
+            assigned_to: asset.assigned_to || "",
+            status: asset.status || "Available",
+            purchase_date: asset.purchase_date
+                ? new Date(asset.purchase_date).toISOString().slice(0, 10)
+                : "",
+        });
+
+        setSaveError("");
+    };
+
+    const handleChange = (e) => {
+        const { name, value } = e.target;
+
+        setFormData((prev) => ({
+            ...prev,
+            [name]: value,
+        }));
+    };
+
+    const handleUpdate = async (e) => {
+        e.preventDefault();
+
+        try {
+            setSaving(true);
+            setSaveError("");
+
+            const response = await updateAsset(
+                selectedAsset.id,
+                {
+                    name: formData.name,
+                    type: formData.type,
+                    serial_number: formData.serial_number,
+                    assigned_to: formData.assigned_to,
+                    status: formData.status,
+                    purchase_date: formData.purchase_date || null,
+                }
+            );
+
+            const updatedAsset = response?.asset || response?.data?.asset;
+
+            setAssets((prev) =>
+                prev.map((asset) =>
+                    asset.id === selectedAsset.id
+                        ? {
+                            ...asset,
+                            ...formData,
+                            ...(updatedAsset || {}),
+                        }
+                        : asset
+                )
+            );
+
+            setSelectedAsset(null);
+        } catch (err) {
+            setSaveError(err.message || "Failed to update asset");
+        } finally {
+            setSaving(false);
+        }
+    };
+
+    if (loading) {
+        return (
+            <div className="flex min-h-[60vh] items-center justify-center">
+                <div className="flex flex-col items-center gap-3">
+                    <div className="h-10 w-10 animate-spin rounded-full border-4 border-blue-100 border-t-blue-600" />
+                    <p className="text-sm font-medium text-slate-500">
+                        Loading assets...
+                    </p>
+                </div>
+            </div>
+        );
+    }
+
     return (
-        <section id="assets">
-            <div className="section-header">
-                <div>
-                    <h2>Assets</h2>
+        <div className="space-y-6">
 
-                    <p className="page-description">
-                        View and manage all registered assets.
+            {/* Header */}
+            <div className="flex flex-wrap items-center justify-between gap-4">
+                <div>
+                    <h1 className="text-3xl font-bold tracking-tight text-slate-900">
+                        All Assets
+                    </h1>
+
+                    <p className="mt-1 text-sm text-slate-500">
+                        View and manage organizational assets.
+                    </p>
+                </div>
+
+                <Link
+                    to="/assets/add"
+                    className="inline-flex items-center gap-2 rounded-lg bg-blue-600 px-5 py-3 text-sm font-semibold text-white shadow-sm transition hover:bg-blue-700"
+                >
+                    <Plus size={18} />
+                    Add Asset
+                </Link>
+            </div>
+
+            {/* Error */}
+            {error && (
+                <div className="rounded-lg border border-red-200 bg-red-50 p-4 text-sm text-red-700">
+                    {error}
+                </div>
+            )}
+
+            {/* Asset Count */}
+            <div className="flex items-center gap-3 rounded-xl border border-slate-200 bg-white p-4 shadow-sm">
+                <div className="flex h-11 w-11 items-center justify-center rounded-lg bg-blue-50 text-blue-600">
+                    <Package size={22} />
+                </div>
+
+                <div>
+                    <p className="text-sm text-slate-500">
+                        Total Assets
+                    </p>
+                    <p className="text-xl font-bold text-slate-900">
+                        {assets.length}
                     </p>
                 </div>
             </div>
 
-            <AssetTable
-                assets={assets}
-                onDelete={onDelete}
-                onEdit={onEdit}
-            />
-        </section>
+            {/* Assets Table */}
+            <div className="overflow-hidden rounded-xl border border-slate-200 bg-white shadow-sm">
+                <div className="overflow-x-auto">
+                    <table className="w-full text-left text-sm">
+
+                        <thead className="bg-slate-50 text-xs uppercase tracking-wide text-slate-500">
+                            <tr>
+                                <th className="whitespace-nowrap px-6 py-4">
+                                    Asset
+                                </th>
+
+                                <th className="whitespace-nowrap px-6 py-4">
+                                    Type
+                                </th>
+
+                                <th className="whitespace-nowrap px-6 py-4">
+                                    Serial Number
+                                </th>
+
+                                <th className="whitespace-nowrap px-6 py-4">
+                                    Status
+                                </th>
+
+                                <th className="whitespace-nowrap px-6 py-4">
+                                    Employee
+                                </th>
+
+                                <th className="whitespace-nowrap px-6 py-4">
+                                    Purchase Date
+                                </th>
+
+                                <th className="whitespace-nowrap px-6 py-4 text-center">
+                                    Action
+                                </th>
+                            </tr>
+                        </thead>
+
+                        <tbody className="divide-y divide-slate-100">
+                            {assets.map((asset) => (
+                                <tr
+                                    key={asset.id}
+                                    className="transition hover:bg-slate-50"
+                                >
+                                    <td className="whitespace-nowrap px-6 py-4">
+                                        <div className="flex items-center gap-3">
+                                            <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-slate-100 text-slate-600">
+                                                <Package size={18} />
+                                            </div>
+
+                                            <span className="font-medium text-slate-900">
+                                                {asset.name || asset.asset_name || "—"}
+                                            </span>
+                                        </div>
+                                    </td>
+
+                                    <td className="whitespace-nowrap px-6 py-4 text-slate-600">
+                                        {asset.type || asset.asset_type || "—"}
+                                    </td>
+
+                                    <td className="whitespace-nowrap px-6 py-4 text-slate-600">
+                                        {asset.serial_number || "—"}
+                                    </td>
+
+                                    <td className="whitespace-nowrap px-6 py-4">
+                                        <StatusBadge status={asset.status} />
+                                    </td>
+
+                                    <td className="whitespace-nowrap px-6 py-4">
+                                        <div className="flex items-center gap-2 text-slate-600">
+                                            <UserRound
+                                                size={16}
+                                                className="text-slate-400"
+                                            />
+
+                                            {asset.employee_name ||
+                                                asset.assigned_to ||
+                                                "Unassigned"}
+                                        </div>
+                                    </td>
+
+                                    <td className="whitespace-nowrap px-6 py-4">
+                                        <div className="flex items-center gap-2 text-slate-600">
+                                            <CalendarDays
+                                                size={16}
+                                                className="text-slate-400"
+                                            />
+
+                                            {asset.purchase_date
+                                                ? new Date(
+                                                    asset.purchase_date
+                                                ).toLocaleDateString("en-IN", {
+                                                    day: "2-digit",
+                                                    month: "short",
+                                                    year: "numeric",
+                                                })
+                                                : "—"}
+                                        </div>
+                                    </td>
+
+                                    {/* Edit Action */}
+                                    <td className="whitespace-nowrap px-6 py-4 text-center">
+                                        <button
+                                            type="button"
+                                            onClick={() => handleEdit(asset)}
+                                            className="inline-flex items-center gap-2 rounded-lg border border-blue-200 bg-blue-50 px-3 py-2 text-xs font-semibold text-blue-700 transition hover:bg-blue-100"
+                                        >
+                                            <Pencil size={14} />
+                                            Edit
+                                        </button>
+                                    </td>
+                                </tr>
+                            ))}
+
+                            {assets.length === 0 && (
+                                <tr>
+                                    <td
+                                        colSpan={7}
+                                        className="px-6 py-16 text-center"
+                                    >
+                                        <div className="flex flex-col items-center gap-3">
+                                            <Package
+                                                size={28}
+                                                className="text-slate-400"
+                                            />
+
+                                            <p className="font-medium text-slate-700">
+                                                No assets found
+                                            </p>
+
+                                            <p className="text-sm text-slate-500">
+                                                Start by adding your first asset.
+                                            </p>
+                                        </div>
+                                    </td>
+                                </tr>
+                            )}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            {/* Edit Asset Modal */}
+            {selectedAsset && (
+                <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/50 px-4 py-6">
+                    <div className="max-h-[90vh] w-full max-w-lg overflow-y-auto rounded-2xl bg-white shadow-2xl">
+
+                        {/* Modal Header */}
+                        <div className="flex items-center justify-between border-b border-slate-200 px-6 py-5">
+                            <div>
+                                <h2 className="text-xl font-bold text-slate-900">
+                                    Edit Asset
+                                </h2>
+
+                                <p className="mt-1 text-sm text-slate-500">
+                                    Update asset information.
+                                </p>
+                            </div>
+
+                            <button
+                                type="button"
+                                onClick={() => setSelectedAsset(null)}
+                                className="rounded-lg p-2 text-slate-400 transition hover:bg-slate-100 hover:text-slate-700"
+                            >
+                                <X size={20} />
+                            </button>
+                        </div>
+
+                        {/* Modal Form */}
+                        <form onSubmit={handleUpdate} className="space-y-5 p-6">
+
+                            {saveError && (
+                                <div className="rounded-lg border border-red-200 bg-red-50 p-3 text-sm text-red-700">
+                                    {saveError}
+                                </div>
+                            )}
+
+                            {/* Asset Name */}
+                            <div>
+                                <label className="mb-2 block text-sm font-medium text-slate-700">
+                                    Asset Name
+                                </label>
+
+                                <input
+                                    type="text"
+                                    name="name"
+                                    value={formData.name}
+                                    onChange={handleChange}
+                                    required
+                                    className="w-full rounded-lg border border-slate-300 px-4 py-3 text-sm outline-none transition focus:border-blue-500 focus:ring-2 focus:ring-blue-100"
+                                />
+                            </div>
+
+                            {/* Asset Type */}
+                            <div>
+                                <label className="mb-2 block text-sm font-medium text-slate-700">
+                                    Asset Type
+                                </label>
+
+                                <select
+                                    name="type"
+                                    value={formData.type}
+                                    onChange={handleChange}
+                                    required
+                                    className="w-full rounded-lg border border-slate-300 bg-white px-4 py-3 text-sm outline-none transition focus:border-blue-500 focus:ring-2 focus:ring-blue-100"
+                                >
+                                    <option value="">Select type</option>
+                                    <option value="Laptop">Laptop</option>
+                                    <option value="Monitor">Monitor</option>
+                                    <option value="Mouse">Mouse</option>
+                                    <option value="Keyboard">Keyboard</option>
+                                    <option value="Other">Other</option>
+                                </select>
+                            </div>
+
+                            {/* Serial Number */}
+                            <div>
+                                <label className="mb-2 block text-sm font-medium text-slate-700">
+                                    Serial Number
+                                </label>
+
+                                <input
+                                    type="text"
+                                    name="serial_number"
+                                    value={formData.serial_number}
+                                    onChange={handleChange}
+                                    className="w-full rounded-lg border border-slate-300 px-4 py-3 text-sm outline-none transition focus:border-blue-500 focus:ring-2 focus:ring-blue-100"
+                                />
+                            </div>
+
+                            {/* Assigned To */}
+                            <div>
+                                <label className="mb-2 block text-sm font-medium text-slate-700">
+                                    Assigned To
+                                </label>
+
+                                <input
+                                    type="text"
+                                    name="assigned_to"
+                                    value={formData.assigned_to}
+                                    onChange={handleChange}
+                                    placeholder="Enter employee name"
+                                    className="w-full rounded-lg border border-slate-300 px-4 py-3 text-sm outline-none transition focus:border-blue-500 focus:ring-2 focus:ring-blue-100"
+                                />
+                            </div>
+
+                            {/* Status */}
+                            <div>
+                                <label className="mb-2 block text-sm font-medium text-slate-700">
+                                    Status
+                                </label>
+
+                                <select
+                                    name="status"
+                                    value={formData.status}
+                                    onChange={handleChange}
+                                    required
+                                    className="w-full rounded-lg border border-slate-300 bg-white px-4 py-3 text-sm outline-none transition focus:border-blue-500 focus:ring-2 focus:ring-blue-100"
+                                >
+                                    <option value="Available">Available</option>
+                                    <option value="Assigned">Assigned</option>
+                                    <option value="Maintenance">Maintenance</option>
+                                </select>
+                            </div>
+
+                            {/* Purchase Date */}
+                            <div>
+                                <label className="mb-2 block text-sm font-medium text-slate-700">
+                                    Purchase Date
+                                </label>
+
+                                <input
+                                    type="date"
+                                    name="purchase_date"
+                                    value={formData.purchase_date}
+                                    onChange={handleChange}
+                                    className="w-full rounded-lg border border-slate-300 px-4 py-3 text-sm outline-none transition focus:border-blue-500 focus:ring-2 focus:ring-blue-100"
+                                />
+                            </div>
+
+                            {/* Actions */}
+                            <div className="flex justify-end gap-3 border-t border-slate-100 pt-5">
+                                <button
+                                    type="button"
+                                    onClick={() => setSelectedAsset(null)}
+                                    disabled={saving}
+                                    className="rounded-lg border border-slate-300 px-4 py-2.5 text-sm font-medium text-slate-700 transition hover:bg-slate-50"
+                                >
+                                    Cancel
+                                </button>
+
+                                <button
+                                    type="submit"
+                                    disabled={saving}
+                                    className="inline-flex items-center gap-2 rounded-lg bg-blue-600 px-5 py-2.5 text-sm font-semibold text-white transition hover:bg-blue-700 disabled:cursor-not-allowed disabled:opacity-60"
+                                >
+                                    <Save size={16} />
+                                    {saving ? "Saving..." : "Save Changes"}
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            )}
+        </div>
     );
-}
+};
 
 export default Assets;
