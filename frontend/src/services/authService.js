@@ -1,80 +1,92 @@
-const API_URL = "/api/auth";
+import { apiRequest } from "./api";
 
-export const registerUser = async (email, password) => {
-    const response = await fetch(`${API_URL}/register`, {
-        method: "POST",
-        headers: {
-            "Content-Type": "application/json"
-        },
-        body: JSON.stringify({
-            email,
-            password
-        })
-    });
+// Register user
+export const registerUser = async (emailOrData, password) => {
+  const credentials =
+    typeof emailOrData === "object"
+      ? emailOrData
+      : { email: emailOrData, password };
 
-    const data = await response.json();
+  const data = await apiRequest("/auth/register", {
+    method: "POST",
+    body: JSON.stringify({
+      email: credentials.email,
+      password: credentials.password,
+    }),
+  });
 
-    if (!response.ok) {
-        throw new Error(data.message || "Registration failed");
-    }
-
-    return data;
+  return data;
 };
 
-export const loginUser = async (email, password) => {
-    const response = await fetch(`${API_URL}/login`, {
-        method: "POST",
-        headers: {
-            "Content-Type": "application/json"
-        },
-        body: JSON.stringify({
-            email,
-            password
-        })
-    });
+// Login user
+export const loginUser = async (emailOrData, password) => {
+  const credentials =
+    typeof emailOrData === "object"
+      ? emailOrData
+      : { email: emailOrData, password };
 
-    const data = await response.json();
+  const data = await apiRequest("/auth/login", {
+    method: "POST",
+    body: JSON.stringify({
+      email: credentials.email,
+      password: credentials.password,
+    }),
+  });
 
-    if (!response.ok) {
-        throw new Error(data.message || "Login failed");
-    }
+  if (!data.accessToken) {
+    throw new Error("Login response does not contain an access token");
+  }
 
-    localStorage.setItem("accessToken", data.accessToken);
+  localStorage.setItem("accessToken", data.accessToken);
+
+  if (data.refreshToken) {
     localStorage.setItem("refreshToken", data.refreshToken);
+  }
+
+  if (data.user) {
     localStorage.setItem("user", JSON.stringify(data.user));
+  }
 
-    return data;
+  return data;
 };
 
+// Logout user
 export const logoutUser = async () => {
-    const token = localStorage.getItem("accessToken");
-
-    try {
-        if (token) {
-            await fetch(`${API_URL}/logout`, {
-                method: "POST",
-                headers: {
-                    Authorization: `Bearer ${token}`
-                }
-            });
-        }
-    } finally {
-        localStorage.removeItem("accessToken");
-        localStorage.removeItem("refreshToken");
-        localStorage.removeItem("user");
+  try {
+    if (getAccessToken()) {
+      await apiRequest("/auth/logout", {
+        method: "POST",
+      });
     }
+  } finally {
+    localStorage.removeItem("accessToken");
+    localStorage.removeItem("refreshToken");
+    localStorage.removeItem("user");
+  }
 };
 
+// Get access token
 export const getAccessToken = () => {
-    return localStorage.getItem("accessToken");
+  return localStorage.getItem("accessToken");
 };
 
+// Get logged-in user
 export const getCurrentUser = () => {
-    const user = localStorage.getItem("user");
+  const user = localStorage.getItem("user");
 
-    return user ? JSON.parse(user) : null;
+  if (!user) {
+    return null;
+  }
+
+  try {
+    return JSON.parse(user);
+  } catch {
+    localStorage.removeItem("user");
+    return null;
+  }
 };
 
+// Check authentication
 export const isAuthenticated = () => {
-    return !!localStorage.getItem("accessToken");
+  return !!getAccessToken();
 };
