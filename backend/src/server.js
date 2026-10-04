@@ -4,6 +4,7 @@ import dotenv from "dotenv";
 
 import assetRoutes from "./routes/assetRoutes.js";
 import authRoutes from "./routes/authRoutes.js";
+import employeeRoutes from "./routes/employeeRoutes.js";
 
 dotenv.config();
 
@@ -30,6 +31,8 @@ app.get("/health", (req, res) => {
 app.use("/api/auth", authRoutes);
 // Asset APIs
 app.use("/api/assets", assetRoutes);
+// Employees APIs
+app.use("/api/employees", employeeRoutes);
 
 const PORT = process.env.PORT || 5000;
 
