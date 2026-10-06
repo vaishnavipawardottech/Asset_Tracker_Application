@@ -9,9 +9,9 @@ function AssetTable({ assets, onDelete, onEdit }) {
     };
 
     return (
-        <div className="table-container">
-            <table>
-                <thead>
+        <div className="overflow-x-auto rounded-xl border border-slate-700 bg-slate-900 text-slate-100">
+            <table className="w-full text-left text-sm">
+                <thead className="bg-slate-800 text-xs uppercase text-slate-400">
                     <tr>
                         <th>ID</th>
                         <th>Name</th>
@@ -27,7 +27,7 @@ function AssetTable({ assets, onDelete, onEdit }) {
 
                 <tbody>
                     {assets.map((asset) => (
-                        <tr key={asset.id}>
+                        <tr key={asset.id} className="border-b border-slate-700">
                             <td>{asset.id}</td>
 
                             <td>{asset.name}</td>
@@ -40,7 +40,7 @@ function AssetTable({ assets, onDelete, onEdit }) {
 
                             <td>
                                 <span
-                                    className={`status ${asset.status.toLowerCase()}`}
+                                    className="rounded-full bg-blue-900/70 px-3 py-1 text-xs text-blue-300"
                                 >
                                     {asset.status}
                                 </span>
@@ -52,7 +52,7 @@ function AssetTable({ assets, onDelete, onEdit }) {
 
                             <td>
                                 <button
-                                    className="icon-btn edit-icon"
+                                    className="rounded-lg p-2 text-blue-400 hover:bg-blue-950"
                                     onClick={() => onEdit(asset)}
                                     title="Edit asset"
                                 >
@@ -74,7 +74,7 @@ function AssetTable({ assets, onDelete, onEdit }) {
 
                             <td>
                                 <button
-                                    className="icon-btn delete-icon"
+                                    className="rounded-lg p-2 text-red-400 hover:bg-red-950"
                                     onClick={() => onDelete(asset.id)}
                                     title="Delete asset"
                                 >

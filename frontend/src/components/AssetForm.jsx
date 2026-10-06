@@ -72,14 +72,14 @@ function AssetForm({ onAdd, onUpdate, editingAsset, onCancelEdit }) {
     };
 
     return (
-        <section className="form-section">
-            <div className="form-header">
+        <section className="rounded-xl border border-slate-700 bg-slate-900 p-8 text-slate-100">
+            <div className="mb-6">
                 <div>
                     <h2>
                         {editingAsset ? "Edit Asset" : "Add Asset"}
                     </h2>
 
-                    <p className="page-description">
+                    <p className="text-slate-400">
                         {editingAsset
                             ? "Update the selected asset details."
                             : "Register a new IT asset."}
@@ -89,10 +89,10 @@ function AssetForm({ onAdd, onUpdate, editingAsset, onCancelEdit }) {
 
             <form
                 onSubmit={handleSubmit}
-                className="asset-form"
+                className="grid gap-5"
             >
-                <div className="form-group">
-                    <label>Asset Name</label>
+                <div className="grid gap-2">
+                    <label className="text-sm font-medium text-slate-300">Asset Name</label>
 
                     <input
                         type="text"
@@ -101,11 +101,12 @@ function AssetForm({ onAdd, onUpdate, editingAsset, onCancelEdit }) {
                         value={formData.name}
                         onChange={handleChange}
                         required
+                        className="w-full rounded-lg border border-slate-600 bg-slate-950 px-4 py-3 text-slate-100 placeholder-slate-500 outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-900"
                     />
                 </div>
 
-                <div className="form-group">
-                    <label>Type</label>
+                <div className="grid gap-2">
+                    <label className="text-sm font-medium text-slate-300">Type</label>
 
                     <input
                         type="text"
@@ -114,11 +115,12 @@ function AssetForm({ onAdd, onUpdate, editingAsset, onCancelEdit }) {
                         value={formData.type}
                         onChange={handleChange}
                         required
+                        className="w-full rounded-lg border border-slate-600 bg-slate-950 px-4 py-3 text-slate-100 placeholder-slate-500 outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-900"
                     />
                 </div>
 
-                <div className="form-group">
-                    <label>Serial Number</label>
+                <div className="grid gap-2">
+                    <label className="text-sm font-medium text-slate-300">Serial Number</label>
 
                     <input
                         type="text"
@@ -127,11 +129,12 @@ function AssetForm({ onAdd, onUpdate, editingAsset, onCancelEdit }) {
                         value={formData.serial_number}
                         onChange={handleChange}
                         required
+                        className="w-full rounded-lg border border-slate-600 bg-slate-950 px-4 py-3 text-slate-100 placeholder-slate-500 outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-900"
                     />
                 </div>
 
-                <div className="form-group">
-                    <label>Assigned To</label>
+                <div className="grid gap-2">
+                    <label className="text-sm font-medium text-slate-300">Assigned To</label>
 
                     <input
                         type="text"
@@ -139,16 +142,18 @@ function AssetForm({ onAdd, onUpdate, editingAsset, onCancelEdit }) {
                         placeholder="e.g. Vaishnavi"
                         value={formData.assigned_to}
                         onChange={handleChange}
+                        className="w-full rounded-lg border border-slate-600 bg-slate-950 px-4 py-3 text-slate-100 placeholder-slate-500 outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-900"
                     />
                 </div>
 
-                <div className="form-group">
-                    <label>Status</label>
+                <div className="grid gap-2">
+                    <label className="text-sm font-medium text-slate-300">Status</label>
 
                     <select
                         name="status"
                         value={formData.status}
                         onChange={handleChange}
+                        className="w-full rounded-lg border border-slate-600 bg-slate-950 px-4 py-3 text-slate-100 outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-900"
                     >
                         <option value="Available">
                             Available
@@ -164,21 +169,22 @@ function AssetForm({ onAdd, onUpdate, editingAsset, onCancelEdit }) {
                     </select>
                 </div>
 
-                <div className="form-group">
-                    <label>Purchase Date</label>
+                <div className="grid gap-2">
+                    <label className="text-sm font-medium text-slate-300">Purchase Date</label>
 
                     <input
                         type="date"
                         name="purchase_date"
                         value={formData.purchase_date}
                         onChange={handleChange}
+                        className="w-full rounded-lg border border-slate-600 bg-slate-950 px-4 py-3 text-slate-100 outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-900"
                     />
                 </div>
 
-                <div className="form-actions">
+                <div className="flex gap-3 pt-2">
                     <button
                         type="submit"
-                        className="primary-btn"
+                        className="rounded-lg bg-blue-600 px-5 py-3 font-medium text-white hover:bg-blue-700"
                     >
                         {editingAsset
                             ? "Update Asset"
@@ -188,7 +194,7 @@ function AssetForm({ onAdd, onUpdate, editingAsset, onCancelEdit }) {
                     {editingAsset && (
                         <button
                             type="button"
-                            className="secondary-btn"
+                            className="rounded-lg border border-slate-600 px-5 py-3 font-medium text-slate-300 hover:bg-slate-800"
                             onClick={handleCancel}
                         >
                             Cancel

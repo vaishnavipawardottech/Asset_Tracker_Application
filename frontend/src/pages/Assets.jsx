@@ -118,7 +118,7 @@ const Assets = () => {
             <div className="flex min-h-[60vh] items-center justify-center">
                 <div className="flex flex-col items-center gap-3">
                     <div className="h-10 w-10 animate-spin rounded-full border-4 border-blue-100 border-t-blue-600" />
-                    <p className="text-sm font-medium text-slate-500">
+                    <p className="text-sm font-medium text-slate-400">
                         Loading assets...
                     </p>
                 </div>
@@ -132,11 +132,11 @@ const Assets = () => {
             {/* Header */}
             <div className="flex flex-wrap items-center justify-between gap-4">
                 <div>
-                    <h1 className="text-3xl font-bold tracking-tight text-slate-900">
+                    <h1 className="text-3xl font-bold tracking-tight text-slate-100">
                         All Assets
                     </h1>
 
-                    <p className="mt-1 text-sm text-slate-500">
+                    <p className="mt-1 text-sm text-slate-400">
                         View and manage organizational assets.
                     </p>
                 </div>
@@ -152,33 +152,33 @@ const Assets = () => {
 
             {/* Error */}
             {error && (
-                <div className="rounded-lg border border-red-200 bg-red-50 p-4 text-sm text-red-700">
+                <div className="rounded-lg border border-red-800 bg-red-950 p-4 text-sm text-red-300">
                     {error}
                 </div>
             )}
 
             {/* Asset Count */}
-            <div className="flex items-center gap-3 rounded-xl border border-slate-200 bg-white p-4 shadow-sm">
-                <div className="flex h-11 w-11 items-center justify-center rounded-lg bg-blue-50 text-blue-600">
+            <div className="flex items-center gap-3 rounded-xl border border-slate-700 bg-slate-900 p-4 shadow-sm">
+                <div className="flex h-11 w-11 items-center justify-center rounded-lg bg-blue-900/70 text-blue-300">
                     <Package size={22} />
                 </div>
 
                 <div>
-                    <p className="text-sm text-slate-500">
+                    <p className="text-sm text-slate-400">
                         Total Assets
                     </p>
-                    <p className="text-xl font-bold text-slate-900">
+                    <p className="text-xl font-bold text-slate-100">
                         {assets.length}
                     </p>
                 </div>
             </div>
 
             {/* Assets Table */}
-            <div className="overflow-hidden rounded-xl border border-slate-200 bg-white shadow-sm">
+            <div className="overflow-hidden rounded-xl border border-slate-700 bg-slate-900 shadow-sm">
                 <div className="overflow-x-auto">
                     <table className="w-full text-left text-sm">
 
-                        <thead className="bg-slate-50 text-xs uppercase tracking-wide text-slate-500">
+                        <thead className="bg-slate-800 text-xs uppercase tracking-wide text-slate-400">
                             <tr>
                                 <th className="whitespace-nowrap px-6 py-4">
                                     Asset
@@ -210,29 +210,29 @@ const Assets = () => {
                             </tr>
                         </thead>
 
-                        <tbody className="divide-y divide-slate-100">
+                        <tbody className="divide-y divide-slate-700">
                             {assets.map((asset) => (
                                 <tr
                                     key={asset.id}
-                                    className="transition hover:bg-slate-50"
+                                    className="transition hover:bg-slate-800"
                                 >
                                     <td className="whitespace-nowrap px-6 py-4">
                                         <div className="flex items-center gap-3">
-                                            <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-slate-100 text-slate-600">
+                                            <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-slate-800 text-slate-400">
                                                 <Package size={18} />
                                             </div>
 
-                                            <span className="font-medium text-slate-900">
+                                            <span className="font-medium text-slate-100">
                                                 {asset.name || asset.asset_name || "—"}
                                             </span>
                                         </div>
                                     </td>
 
-                                    <td className="whitespace-nowrap px-6 py-4 text-slate-600">
+                                    <td className="whitespace-nowrap px-6 py-4 text-slate-400">
                                         {asset.type || asset.asset_type || "—"}
                                     </td>
 
-                                    <td className="whitespace-nowrap px-6 py-4 text-slate-600">
+                                    <td className="whitespace-nowrap px-6 py-4 text-slate-400">
                                         {asset.serial_number || "—"}
                                     </td>
 
@@ -241,7 +241,7 @@ const Assets = () => {
                                     </td>
 
                                     <td className="whitespace-nowrap px-6 py-4">
-                                        <div className="flex items-center gap-2 text-slate-600">
+                                        <div className="flex items-center gap-2 text-slate-400">
                                             <UserRound
                                                 size={16}
                                                 className="text-slate-400"
@@ -254,7 +254,7 @@ const Assets = () => {
                                     </td>
 
                                     <td className="whitespace-nowrap px-6 py-4">
-                                        <div className="flex items-center gap-2 text-slate-600">
+                                        <div className="flex items-center gap-2 text-slate-400">
                                             <CalendarDays
                                                 size={16}
                                                 className="text-slate-400"
@@ -298,11 +298,11 @@ const Assets = () => {
                                                 className="text-slate-400"
                                             />
 
-                                            <p className="font-medium text-slate-700">
+                                            <p className="font-medium text-slate-300">
                                                 No assets found
                                             </p>
 
-                                            <p className="text-sm text-slate-500">
+                                            <p className="text-sm text-slate-400">
                                                 Start by adding your first asset.
                                             </p>
                                         </div>
@@ -317,16 +317,16 @@ const Assets = () => {
             {/* Edit Asset Modal */}
             {selectedAsset && (
                 <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/50 px-4 py-6">
-                    <div className="max-h-[90vh] w-full max-w-lg overflow-y-auto rounded-2xl bg-white shadow-2xl">
+                    <div className="max-h-[90vh] w-full max-w-lg overflow-y-auto rounded-2xl bg-slate-900 shadow-2xl">
 
                         {/* Modal Header */}
-                        <div className="flex items-center justify-between border-b border-slate-200 px-6 py-5">
+                        <div className="flex items-center justify-between border-b border-slate-700 px-6 py-5">
                             <div>
-                                <h2 className="text-xl font-bold text-slate-900">
+                                <h2 className="text-xl font-bold text-slate-100">
                                     Edit Asset
                                 </h2>
 
-                                <p className="mt-1 text-sm text-slate-500">
+                                <p className="mt-1 text-sm text-slate-400">
                                     Update asset information.
                                 </p>
                             </div>
@@ -334,7 +334,7 @@ const Assets = () => {
                             <button
                                 type="button"
                                 onClick={() => setSelectedAsset(null)}
-                                className="rounded-lg p-2 text-slate-400 transition hover:bg-slate-100 hover:text-slate-700"
+                                className="rounded-lg p-2 text-slate-400 transition hover:bg-slate-800 hover:text-slate-200"
                             >
                                 <X size={20} />
                             </button>
@@ -344,14 +344,14 @@ const Assets = () => {
                         <form onSubmit={handleUpdate} className="space-y-5 p-6">
 
                             {saveError && (
-                                <div className="rounded-lg border border-red-200 bg-red-50 p-3 text-sm text-red-700">
+                                <div className="rounded-lg border border-red-800 bg-red-950 p-3 text-sm text-red-300">
                                     {saveError}
                                 </div>
                             )}
 
                             {/* Asset Name */}
                             <div>
-                                <label className="mb-2 block text-sm font-medium text-slate-700">
+                                <label className="mb-2 block text-sm font-medium text-slate-300">
                                     Asset Name
                                 </label>
 
@@ -361,13 +361,13 @@ const Assets = () => {
                                     value={formData.name}
                                     onChange={handleChange}
                                     required
-                                    className="w-full rounded-lg border border-slate-300 px-4 py-3 text-sm outline-none transition focus:border-blue-500 focus:ring-2 focus:ring-blue-100"
+                                    className="w-full rounded-lg border border-slate-600 bg-slate-950 px-4 py-3 text-sm text-slate-100 placeholder-slate-500 outline-none transition focus:border-blue-500 focus:ring-2 focus:ring-blue-900"
                                 />
                             </div>
 
                             {/* Asset Type */}
                             <div>
-                                <label className="mb-2 block text-sm font-medium text-slate-700">
+                                <label className="mb-2 block text-sm font-medium text-slate-300">
                                     Asset Type
                                 </label>
 
@@ -376,7 +376,7 @@ const Assets = () => {
                                     value={formData.type}
                                     onChange={handleChange}
                                     required
-                                    className="w-full rounded-lg border border-slate-300 bg-white px-4 py-3 text-sm outline-none transition focus:border-blue-500 focus:ring-2 focus:ring-blue-100"
+                                    className="w-full rounded-lg border border-slate-600 bg-slate-950 px-4 py-3 text-sm text-slate-100 outline-none transition focus:border-blue-500 focus:ring-2 focus:ring-blue-900"
                                 >
                                     <option value="">Select type</option>
                                     <option value="Laptop">Laptop</option>
@@ -389,7 +389,7 @@ const Assets = () => {
 
                             {/* Serial Number */}
                             <div>
-                                <label className="mb-2 block text-sm font-medium text-slate-700">
+                                <label className="mb-2 block text-sm font-medium text-slate-300">
                                     Serial Number
                                 </label>
 
@@ -398,13 +398,13 @@ const Assets = () => {
                                     name="serial_number"
                                     value={formData.serial_number}
                                     onChange={handleChange}
-                                    className="w-full rounded-lg border border-slate-300 px-4 py-3 text-sm outline-none transition focus:border-blue-500 focus:ring-2 focus:ring-blue-100"
+                                    className="w-full rounded-lg border border-slate-600 bg-slate-950 px-4 py-3 text-sm text-slate-100 placeholder-slate-500 outline-none transition focus:border-blue-500 focus:ring-2 focus:ring-blue-900"
                                 />
                             </div>
 
                             {/* Assigned To */}
                             <div>
-                                <label className="mb-2 block text-sm font-medium text-slate-700">
+                                <label className="mb-2 block text-sm font-medium text-slate-300">
                                     Assigned To
                                 </label>
 
@@ -414,13 +414,13 @@ const Assets = () => {
                                     value={formData.assigned_to}
                                     onChange={handleChange}
                                     placeholder="Enter employee name"
-                                    className="w-full rounded-lg border border-slate-300 px-4 py-3 text-sm outline-none transition focus:border-blue-500 focus:ring-2 focus:ring-blue-100"
+                                    className="w-full rounded-lg border border-slate-600 bg-slate-950 px-4 py-3 text-sm text-slate-100 placeholder-slate-500 outline-none transition focus:border-blue-500 focus:ring-2 focus:ring-blue-900"
                                 />
                             </div>
 
                             {/* Status */}
                             <div>
-                                <label className="mb-2 block text-sm font-medium text-slate-700">
+                                <label className="mb-2 block text-sm font-medium text-slate-300">
                                     Status
                                 </label>
 
@@ -429,7 +429,7 @@ const Assets = () => {
                                     value={formData.status}
                                     onChange={handleChange}
                                     required
-                                    className="w-full rounded-lg border border-slate-300 bg-white px-4 py-3 text-sm outline-none transition focus:border-blue-500 focus:ring-2 focus:ring-blue-100"
+                                    className="w-full rounded-lg border border-slate-600 bg-slate-950 px-4 py-3 text-sm text-slate-100 outline-none transition focus:border-blue-500 focus:ring-2 focus:ring-blue-900"
                                 >
                                     <option value="Available">Available</option>
                                     <option value="Assigned">Assigned</option>
@@ -439,7 +439,7 @@ const Assets = () => {
 
                             {/* Purchase Date */}
                             <div>
-                                <label className="mb-2 block text-sm font-medium text-slate-700">
+                                <label className="mb-2 block text-sm font-medium text-slate-300">
                                     Purchase Date
                                 </label>
 
@@ -448,7 +448,7 @@ const Assets = () => {
                                     name="purchase_date"
                                     value={formData.purchase_date}
                                     onChange={handleChange}
-                                    className="w-full rounded-lg border border-slate-300 px-4 py-3 text-sm outline-none transition focus:border-blue-500 focus:ring-2 focus:ring-blue-100"
+                                    className="w-full rounded-lg border border-slate-600 bg-slate-950 px-4 py-3 text-sm text-slate-100 outline-none transition focus:border-blue-500 focus:ring-2 focus:ring-blue-900"
                                 />
                             </div>
 
@@ -458,7 +458,7 @@ const Assets = () => {
                                     type="button"
                                     onClick={() => setSelectedAsset(null)}
                                     disabled={saving}
-                                    className="rounded-lg border border-slate-300 px-4 py-2.5 text-sm font-medium text-slate-700 transition hover:bg-slate-50"
+                                    className="rounded-lg border border-slate-600 px-4 py-2.5 text-sm font-medium text-slate-300 transition hover:bg-slate-800"
                                 >
                                     Cancel
                                 </button>
