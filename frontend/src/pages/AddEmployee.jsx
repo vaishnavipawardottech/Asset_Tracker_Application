@@ -52,7 +52,7 @@ const AddEmployee = () => {
         "w-full rounded-lg border border-slate-600 bg-slate-950 px-4 py-3 text-slate-100 placeholder-slate-500 outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-900";
 
     return (
-        <div className="mx-auto max-w-3xl space-y-6">
+        <div className="w-full space-y-6">
 
             <div>
                 <h1 className="text-3xl font-bold text-slate-100">
@@ -66,7 +66,7 @@ const AddEmployee = () => {
 
             <form
                 onSubmit={handleSubmit}
-                className="space-y-5 rounded-xl border border-slate-700 bg-slate-900 p-8 shadow-sm"
+                className="max-w-3xl space-y-5"
             >
 
                 {error && (

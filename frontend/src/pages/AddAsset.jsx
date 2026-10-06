@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { ChevronDown } from "lucide-react";
 
 import { createAsset } from "../services/assetService";
 import { getEmployees } from "../services/employeeService";
@@ -58,9 +59,10 @@ const AddAsset = () => {
 
     const inputClass =
         "w-full rounded-lg border border-slate-600 bg-slate-950 px-4 py-3 text-slate-100 placeholder-slate-500 outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-900";
+    const selectClass = `${inputClass} appearance-none pr-12`;
 
     return (
-        <div className="mx-auto max-w-3xl space-y-6">
+        <div className="w-full space-y-6">
 
             <div>
                 <h1 className="text-3xl font-bold text-slate-100">
@@ -74,7 +76,7 @@ const AddAsset = () => {
 
             <form
                 onSubmit={handleSubmit}
-                className="space-y-5 rounded-xl border border-slate-700 bg-slate-900 p-8 shadow-sm"
+                className="max-w-3xl space-y-5"
             >
 
                 {error && (
@@ -103,20 +105,23 @@ const AddAsset = () => {
                         Asset Type *
                     </label>
 
-                    <select
-                        name="asset_type"
-                        value={form.asset_type}
-                        onChange={handleChange}
-                        required
-                        className={inputClass}
-                    >
-                        <option value="">Select type</option>
-                        <option value="Laptop">Laptop</option>
-                        <option value="Monitor">Monitor</option>
-                        <option value="Mouse">Mouse</option>
-                        <option value="Keyboard">Keyboard</option>
-                        <option value="Other">Other</option>
-                    </select>
+                    <div className="relative">
+                        <select
+                            name="asset_type"
+                            value={form.asset_type}
+                            onChange={handleChange}
+                            required
+                            className={selectClass}
+                        >
+                            <option value="">Select type</option>
+                            <option value="Laptop">Laptop</option>
+                            <option value="Monitor">Monitor</option>
+                            <option value="Mouse">Mouse</option>
+                            <option value="Keyboard">Keyboard</option>
+                            <option value="Other">Other</option>
+                        </select>
+                        <ChevronDown className="pointer-events-none absolute right-4 top-1/2 -translate-y-1/2 text-slate-400" size={18} />
+                    </div>
                 </div>
 
                 <div>
@@ -124,17 +129,20 @@ const AddAsset = () => {
                         Status *
                     </label>
 
-                    <select
-                        name="status"
-                        value={form.status}
-                        onChange={handleChange}
-                        required
-                        className={inputClass}
-                    >
-                        <option value="Available">Available</option>
-                        <option value="Assigned">Assigned</option>
-                        <option value="Maintenance">Maintenance</option>
-                    </select>
+                    <div className="relative">
+                        <select
+                            name="status"
+                            value={form.status}
+                            onChange={handleChange}
+                            required
+                            className={selectClass}
+                        >
+                            <option value="Available">Available</option>
+                            <option value="Assigned">Assigned</option>
+                            <option value="Maintenance">Maintenance</option>
+                        </select>
+                        <ChevronDown className="pointer-events-none absolute right-4 top-1/2 -translate-y-1/2 text-slate-400" size={18} />
+                    </div>
                 </div>
 
                 <div>
@@ -156,23 +164,26 @@ const AddAsset = () => {
                         Assign Employee
                     </label>
 
-                    <select
-                        name="employee_id"
-                        value={form.employee_id}
-                        onChange={handleChange}
-                        className={inputClass}
-                    >
-                        <option value="">Unassigned</option>
+                    <div className="relative">
+                        <select
+                            name="employee_id"
+                            value={form.employee_id}
+                            onChange={handleChange}
+                            className={selectClass}
+                        >
+                            <option value="">Unassigned</option>
 
-                        {employees.map(employee => (
-                            <option
-                                key={employee.id}
-                                value={employee.id}
-                            >
-                                {employee.name} ({employee.email})
-                            </option>
-                        ))}
-                    </select>
+                            {employees.map(employee => (
+                                <option
+                                    key={employee.id}
+                                    value={employee.id}
+                                >
+                                    {employee.name} ({employee.email})
+                                </option>
+                            ))}
+                        </select>
+                        <ChevronDown className="pointer-events-none absolute right-4 top-1/2 -translate-y-1/2 text-slate-400" size={18} />
+                    </div>
                 </div>
 
                 <div className="flex justify-end gap-3 pt-4">

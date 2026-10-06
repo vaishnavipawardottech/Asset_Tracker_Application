@@ -141,13 +141,6 @@ const Assets = () => {
                     </p>
                 </div>
 
-                <Link
-                    to="/assets/add"
-                    className="inline-flex items-center gap-2 rounded-lg bg-blue-600 px-5 py-3 text-sm font-semibold text-white shadow-sm transition hover:bg-blue-700"
-                >
-                    <Plus size={18} />
-                    Add Asset
-                </Link>
             </div>
 
             {/* Error */}

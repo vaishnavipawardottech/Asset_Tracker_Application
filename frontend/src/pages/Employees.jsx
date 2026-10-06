@@ -34,13 +34,6 @@ const Employees = () => {
                     </p>
                 </div>
 
-                <Link
-                    to="/employees/add"
-                    className="flex items-center gap-2 rounded-lg bg-blue-600 px-5 py-3 text-sm font-medium text-white hover:bg-blue-700"
-                >
-                    <Plus size={18} />
-                    Add Employee
-                </Link>
             </div>
 
             {error && (

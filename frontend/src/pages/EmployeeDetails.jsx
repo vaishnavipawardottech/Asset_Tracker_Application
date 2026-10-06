@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { Link, useParams } from "react-router-dom";
+import { ArrowLeft } from "lucide-react";
 
 import { getEmployeeWithAssets } from "../services/employeeService";
 import StatusBadge from "../components/StatusBadge";
@@ -31,9 +32,12 @@ const EmployeeDetails = () => {
 
             <Link
                 to="/employees"
-                className="text-sm font-medium text-blue-600 hover:underline"
+                className="mb-4 inline-flex items-center gap-3 text-lg font-medium text-blue-500 hover:text-blue-400"
             >
-                ← Back to Employees
+                <span className="flex h-9 w-9 items-center justify-center rounded-lg border border-slate-600 text-slate-300 transition hover:bg-slate-800">
+                    <ArrowLeft size={18} />
+                </span>
+                Employees
             </Link>
 
             <div className="rounded-xl border border-slate-700 bg-slate-900 p-6 shadow-sm">
