@@ -82,46 +82,54 @@ const EmployeeDetails = () => {
                     </h2>
                 </div>
 
-                <div className="overflow-x-auto">
-                    <table className="w-full text-left text-sm">
+                {data.assets.length === 0 ? (
+                    <p className="px-6 py-10 text-center text-slate-400">
+                        No assets assigned to this employee.
+                    </p>
+                ) : (
+                    <div className="overflow-x-auto">
+                        <table className="w-full text-left text-sm">
 
-                        <thead className="bg-slate-800 text-xs uppercase text-slate-400">
-                            <tr>
-                                <th className="px-6 py-4">Asset</th>
-                                <th className="px-6 py-4">Status</th>
-                                <th className="px-6 py-4">Purchase Date</th>
-                            </tr>
-                        </thead>
-
-                        <tbody className="divide-y divide-slate-700">
-                            {data.assets.map(asset => (
-                                <tr key={asset.id}>
-                                    <td className="px-6 py-4 font-medium">
-                                        {asset.asset_name}
-                                    </td>
-
-                                    <td className="px-6 py-4">
-                                        <StatusBadge status={asset.status} />
-                                    </td>
-
-                                    <td className="px-6 py-4">
-                                        {asset.purchase_date
-                                            ? new Date(asset.purchase_date).toLocaleDateString()
-                                            : "—"}
-                                    </td>
-                                </tr>
-                            ))}
-
-                            {data.assets.length === 0 && (
+                            <thead className="bg-slate-800 text-xs uppercase text-slate-400">
                                 <tr>
-                                    <td colSpan="3" className="px-6 py-10 text-center text-slate-400">
-                                        No assets assigned to this employee.
-                                    </td>
+                                    <th className="px-6 py-4">Asset</th>
+                                    <th className="px-6 py-4">Type</th>
+                                    <th className="px-6 py-4">Serial Number</th>
+                                    <th className="px-6 py-4">Status</th>
+                                    <th className="px-6 py-4">Purchase Date</th>
                                 </tr>
-                            )}
-                        </tbody>
-                    </table>
-                </div>
+                            </thead>
+
+                            <tbody className="divide-y divide-slate-700">
+                                {data.assets.map(asset => (
+                                    <tr key={asset.id}>
+                                        <td className="px-6 py-4 font-medium">
+                                            {asset.name || asset.asset_name || "—"}
+                                        </td>
+
+                                        <td className="px-6 py-4">
+                                            {asset.type || asset.asset_type || "—"}
+                                        </td>
+
+                                        <td className="px-6 py-4">
+                                            {asset.serial_number || "—"}
+                                        </td>
+
+                                        <td className="px-6 py-4">
+                                            <StatusBadge status={asset.status} />
+                                        </td>
+
+                                        <td className="px-6 py-4">
+                                            {asset.purchase_date
+                                                ? new Date(asset.purchase_date).toLocaleDateString()
+                                                : "—"}
+                                        </td>
+                                    </tr>
+                                ))}
+                            </tbody>
+                        </table>
+                    </div>
+                )}
             </div>
         </div>
     );
