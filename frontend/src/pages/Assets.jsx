@@ -270,9 +270,9 @@ const Assets = () => {
                                         <button
                                             type="button"
                                             onClick={() => handleEdit(asset)}
-                                            className="inline-flex items-center gap-2 rounded-lg border border-blue-200 bg-blue-50 px-3 py-2 text-xs font-semibold text-blue-700 transition hover:bg-blue-100"
+                                            className="inline-flex items-center gap-2 text-blue-400 transition hover:text-blue-300"
                                         >
-                                            <Pencil size={14} />
+                                            <Pencil size={17} />
                                             Edit
                                         </button>
                                     </td>

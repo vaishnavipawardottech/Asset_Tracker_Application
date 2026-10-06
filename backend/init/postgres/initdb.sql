@@ -6,6 +6,7 @@ CREATE TABLE IF NOT EXISTS assets (
     assigned_to VARCHAR(100),
     status VARCHAR(30) NOT NULL,
     purchase_date DATE,
+    employee_id INTEGER REFERENCES employees(id),
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 

@@ -13,6 +13,7 @@ const AddAsset = () => {
     const [form, setForm] = useState({
         asset_name: "",
         asset_type: "",
+        serial_number: "",
         status: "Available",
         purchase_date: "",
         employee_id: ""
@@ -122,6 +123,21 @@ const AddAsset = () => {
                         </select>
                         <ChevronDown className="pointer-events-none absolute right-4 top-1/2 -translate-y-1/2 text-slate-400" size={18} />
                     </div>
+                </div>
+
+                <div>
+                    <label className="mb-2 block text-sm font-medium">
+                        Serial Number *
+                    </label>
+
+                    <input
+                        name="serial_number"
+                        value={form.serial_number}
+                        onChange={handleChange}
+                        required
+                        className={inputClass}
+                        placeholder="e.g. DL-001"
+                    />
                 </div>
 
                 <div>

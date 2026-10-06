@@ -6,7 +6,7 @@ export const getAllAssets = async (req, res) => {
     const result = await pool.query(`
       SELECT
         a.*,
-        e.name AS employee_name
+        COALESCE(e.name, a.assigned_to) AS employee_name
       FROM assets a
       LEFT JOIN employees e
         ON a.employee_id = e.id
@@ -53,58 +53,28 @@ export const getAssetById = async (req, res) => {
     }
 };
 
-// Create asset
-// export const createAsset = async (req, res) => {
-//     try {
-//         const {
-//             name,
-//             type,
-//             serial_number,
-//             assigned_to,
-//             status,
-//             purchase_date
-//         } = req.body;
-
-//         const result = await pool.query(
-//             `INSERT INTO assets
-//             (name, type, serial_number, assigned_to, status, purchase_date)
-//             VALUES ($1, $2, $3, $4, $5, $6)
-//             RETURNING *`,
-//             [
-//                 name,
-//                 type,
-//                 serial_number,
-//                 assigned_to,
-//                 status,
-//                 purchase_date
-//             ]
-//         );
-
-//         res.status(201).json(result.rows[0]);
-//     } catch (error) {
-//         console.error(error);
-
-//         res.status(500).json({
-//             message: "Failed to create asset"
-//         });
-//     }
-// };
-
 // create asset with optional employee assignment
 export const createAsset = async (req, res) => {
   try {
     const {
-      asset_name,
-      asset_type,
+      asset_name: requestedName,
+      asset_type: requestedType,
+      name,
+      type,
+      serial_number,
       purchase_date,
       employee_id,
       status,
     } = req.body;
 
-    if (!asset_name || !asset_type) {
+    const assetName = (requestedName || name || "").trim();
+    const assetType = (requestedType || type || "").trim();
+    const serialNumber = (serial_number || "").trim();
+
+    if (!assetName || !assetType || !serialNumber) {
       return res.status(400).json({
         success: false,
-        message: "Asset name and asset type are required",
+        message: "Asset name, asset type, and serial number are required",
       });
     }
 
@@ -140,12 +110,13 @@ export const createAsset = async (req, res) => {
 
     const result = await pool.query(
       `INSERT INTO assets
-        (asset_name, asset_type, purchase_date, employee_id, status)
-       VALUES ($1, $2, $3, $4, $5)
+        (name, type, serial_number, purchase_date, employee_id, status)
+       VALUES ($1, $2, $3, $4, $5, $6)
        RETURNING *`,
       [
-        asset_name,
-        asset_type,
+        assetName,
+        assetType,
+        serialNumber,
         purchase_date || null,
         assignedEmployeeId,
         assetStatus,
@@ -158,6 +129,13 @@ export const createAsset = async (req, res) => {
       asset: result.rows[0],
     });
   } catch (error) {
+    if (error.code === "23505") {
+      return res.status(409).json({
+        success: false,
+        message: "An asset with this serial number already exists",
+      });
+    }
+
     console.error("Error creating asset:", error);
 
     return res.status(500).json({
