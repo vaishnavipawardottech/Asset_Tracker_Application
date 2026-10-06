@@ -46,7 +46,7 @@ const Sidebar = () => {
     };
 
     return (
-        <aside className="fixed left-0 top-0 z-40 flex h-screen w-64 flex-col bg-slate-950 text-white">
+        <aside className="fixed left-0 top-0 z-40 flex h-screen w-64 flex-col border-r border-slate-700 bg-slate-900 text-white">
 
             <div className="flex h-16 items-center gap-3 border-b border-slate-800 px-6">
                 <Package className="text-blue-400" size={26} />
