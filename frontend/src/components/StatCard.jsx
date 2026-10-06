@@ -1,8 +1,8 @@
 const StatCard = ({ title, value, icon: Icon, color }) => {
     return (
-        <div className="rounded-xl border border-slate-200 bg-white p-5 shadow-sm">
+        <div className="rounded-xl border border-slate-700 bg-slate-900 p-5 shadow-sm">
             <div className="flex items-center justify-between">
-                <p className="text-sm font-medium text-slate-500">
+                <p className="text-sm font-medium text-slate-400">
                     {title}
                 </p>
 
@@ -11,7 +11,7 @@ const StatCard = ({ title, value, icon: Icon, color }) => {
                 </div>
             </div>
 
-            <h2 className="mt-4 text-3xl font-bold text-slate-900">
+            <h2 className="mt-4 text-3xl font-bold text-slate-100">
                 {value}
             </h2>
         </div>

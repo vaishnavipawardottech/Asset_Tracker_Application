@@ -36,33 +36,33 @@ const EmployeeDetails = () => {
                 ← Back to Employees
             </Link>
 
-            <div className="rounded-xl border border-slate-200 bg-white p-6 shadow-sm">
+            <div className="rounded-xl border border-slate-700 bg-slate-900 p-6 shadow-sm">
 
-                <h1 className="text-2xl font-bold text-slate-900">
+                <h1 className="text-2xl font-bold text-slate-100">
                     {data.employee.name}
                 </h1>
 
-                <p className="mt-2 text-slate-500">
+                <p className="mt-2 text-slate-400">
                     {data.employee.email}
                 </p>
 
                 <div className="mt-5 grid grid-cols-1 gap-4 sm:grid-cols-3">
                     <div>
-                        <p className="text-xs text-slate-500">Phone</p>
+                        <p className="text-xs text-slate-400">Phone</p>
                         <p className="mt-1 font-medium">
                             {data.employee.phone || "—"}
                         </p>
                     </div>
 
                     <div>
-                        <p className="text-xs text-slate-500">Department</p>
+                        <p className="text-xs text-slate-400">Department</p>
                         <p className="mt-1 font-medium">
                             {data.employee.department || "—"}
                         </p>
                     </div>
 
                     <div>
-                        <p className="text-xs text-slate-500">Designation</p>
+                        <p className="text-xs text-slate-400">Designation</p>
                         <p className="mt-1 font-medium">
                             {data.employee.designation || "—"}
                         </p>
@@ -70,9 +70,9 @@ const EmployeeDetails = () => {
                 </div>
             </div>
 
-            <div className="rounded-xl border border-slate-200 bg-white shadow-sm">
+            <div className="rounded-xl border border-slate-700 bg-slate-900 shadow-sm">
 
-                <div className="border-b border-slate-200 p-5">
+                <div className="border-b border-slate-700 p-5">
                     <h2 className="text-lg font-semibold">
                         Assigned Assets ({data.assetCount})
                     </h2>
@@ -81,7 +81,7 @@ const EmployeeDetails = () => {
                 <div className="overflow-x-auto">
                     <table className="w-full text-left text-sm">
 
-                        <thead className="bg-slate-50 text-xs uppercase text-slate-500">
+                        <thead className="bg-slate-800 text-xs uppercase text-slate-400">
                             <tr>
                                 <th className="px-6 py-4">Asset</th>
                                 <th className="px-6 py-4">Status</th>
@@ -89,7 +89,7 @@ const EmployeeDetails = () => {
                             </tr>
                         </thead>
 
-                        <tbody className="divide-y divide-slate-100">
+                        <tbody className="divide-y divide-slate-700">
                             {data.assets.map(asset => (
                                 <tr key={asset.id}>
                                     <td className="px-6 py-4 font-medium">
@@ -110,7 +110,7 @@ const EmployeeDetails = () => {
 
                             {data.assets.length === 0 && (
                                 <tr>
-                                    <td colSpan="3" className="px-6 py-10 text-center text-slate-500">
+                                    <td colSpan="3" className="px-6 py-10 text-center text-slate-400">
                                         No assets assigned to this employee.
                                     </td>
                                 </tr>

@@ -49,34 +49,34 @@ const AddEmployee = () => {
     };
 
     const inputClass =
-        "w-full rounded-lg border border-slate-300 px-4 py-3 outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-100";
+        "w-full rounded-lg border border-slate-600 bg-slate-950 px-4 py-3 text-slate-100 placeholder-slate-500 outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-900";
 
     return (
         <div className="mx-auto max-w-3xl space-y-6">
 
             <div>
-                <h1 className="text-3xl font-bold text-slate-900">
+                <h1 className="text-3xl font-bold text-slate-100">
                     Add Employee
                 </h1>
 
-                <p className="mt-1 text-slate-500">
+                <p className="mt-1 text-slate-400">
                     Enter employee details.
                 </p>
             </div>
 
             <form
                 onSubmit={handleSubmit}
-                className="space-y-5 rounded-xl border border-slate-200 bg-white p-8 shadow-sm"
+                className="space-y-5 rounded-xl border border-slate-700 bg-slate-900 p-8 shadow-sm"
             >
 
                 {error && (
-                    <div className="rounded-lg bg-red-50 p-3 text-sm text-red-600">
+                    <div className="rounded-lg bg-red-950 p-3 text-sm text-red-300">
                         {error}
                     </div>
                 )}
 
                 {success && (
-                    <div className="rounded-lg bg-emerald-50 p-3 text-sm text-emerald-700">
+                    <div className="rounded-lg bg-emerald-950 p-3 text-sm text-emerald-300">
                         {success}
                     </div>
                 )}
@@ -159,7 +159,7 @@ const AddEmployee = () => {
                     <button
                         type="button"
                         onClick={() => navigate("/employees")}
-                        className="rounded-lg border border-slate-300 px-5 py-3 text-sm font-medium hover:bg-slate-50"
+                        className="rounded-lg border border-slate-600 px-5 py-3 text-sm font-medium text-slate-300 hover:bg-slate-800"
                     >
                         Cancel
                     </button>
