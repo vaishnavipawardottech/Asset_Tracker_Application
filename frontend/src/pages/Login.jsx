@@ -46,11 +46,11 @@ function Login() {
   };
 
   return (
-    <div className="min-h-screen bg-slate-100 flex items-center justify-center px-4 py-8">
-      <div className="w-full max-w-5xl bg-white rounded-2xl shadow-xl overflow-hidden grid grid-cols-1 md:grid-cols-2">
+    <div className="min-h-screen bg-slate-950 flex items-center justify-center px-4 py-8">
+      <div className="w-full max-w-5xl bg-slate-900 rounded-2xl shadow-xl overflow-hidden grid grid-cols-1 md:grid-cols-2">
         
         {/* Left Side */}
-        <div className="hidden md:flex bg-slate-900 text-white p-12 flex-col justify-between">
+        <div className="hidden md:flex border-r border-slate-700 bg-slate-900 text-white p-12 flex-col justify-between">
           <div>
             <div className="flex items-center gap-3 mb-10">
               <div className="w-11 h-11 bg-blue-600 rounded-xl flex items-center justify-center">
@@ -89,24 +89,24 @@ function Login() {
                 <Package size={22} />
               </div>
 
-              <span className="text-xl font-bold text-slate-900">
+              <span className="text-xl font-bold text-slate-100">
                 Asset Tracker
               </span>
             </div>
 
             <div className="mb-8">
-              <h2 className="text-3xl font-bold text-slate-900">
+              <h2 className="text-3xl font-bold text-slate-100">
                 Welcome back
               </h2>
 
-              <p className="text-slate-500 mt-2">
+              <p className="text-slate-400 mt-2">
                 Login to your account
               </p>
             </div>
 
             {/* Error */}
             {error && (
-              <div className="mb-6 rounded-lg border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">
+              <div className="mb-6 rounded-lg border border-red-800 bg-red-950 px-4 py-3 text-sm text-red-300">
                 {error}
               </div>
             )}
@@ -117,7 +117,7 @@ function Login() {
               <div>
                 <label
                   htmlFor="email"
-                  className="block text-sm font-medium text-slate-700 mb-2"
+                  className="block text-sm font-medium text-slate-300 mb-2"
                 >
                   Email
                 </label>
@@ -136,7 +136,7 @@ function Login() {
                     onChange={handleChange}
                     placeholder="Enter your email"
                     required
-                    className="w-full rounded-lg border border-slate-300 bg-white py-3 pl-10 pr-4 text-sm text-slate-900 outline-none transition focus:border-blue-500 focus:ring-2 focus:ring-blue-100"
+                    className="w-full rounded-lg border border-slate-600 bg-slate-950 py-3 pl-10 pr-4 text-sm text-slate-100 placeholder-slate-500 outline-none transition focus:border-blue-500 focus:ring-2 focus:ring-blue-900"
                   />
                 </div>
               </div>
@@ -145,7 +145,7 @@ function Login() {
               <div>
                 <label
                   htmlFor="password"
-                  className="block text-sm font-medium text-slate-700 mb-2"
+                  className="block text-sm font-medium text-slate-300 mb-2"
                 >
                   Password
                 </label>
@@ -164,7 +164,7 @@ function Login() {
                     onChange={handleChange}
                     placeholder="Enter your password"
                     required
-                    className="w-full rounded-lg border border-slate-300 bg-white py-3 pl-10 pr-4 text-sm text-slate-900 outline-none transition focus:border-blue-500 focus:ring-2 focus:ring-blue-100"
+                    className="w-full rounded-lg border border-slate-600 bg-slate-950 py-3 pl-10 pr-4 text-sm text-slate-100 placeholder-slate-500 outline-none transition focus:border-blue-500 focus:ring-2 focus:ring-blue-900"
                   />
                 </div>
               </div>
@@ -182,7 +182,7 @@ function Login() {
             </form>
 
             {/* Register */}
-            <p className="text-center text-sm text-slate-500 mt-8">
+            <p className="text-center text-sm text-slate-400 mt-8">
               Don't have an account?{" "}
               <Link
                 to="/register"
