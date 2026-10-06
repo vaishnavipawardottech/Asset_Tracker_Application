@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { ChevronDown } from "lucide-react";
 
@@ -21,6 +21,7 @@ const AddAsset = () => {
 
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState("");
+    const purchaseDateRef = useRef(null);
 
     useEffect(() => {
         getEmployees()
@@ -29,9 +30,28 @@ const AddAsset = () => {
     }, []);
 
     const handleChange = (e) => {
+        const { name, value } = e.target;
+
+        if (name === "employee_id") {
+            setForm({
+                ...form,
+                employee_id: value,
+                status: value
+                    ? "Assigned"
+                    : form.status === "Assigned"
+                        ? "Available"
+                        : form.status
+            });
+            return;
+        }
+
+        if (name === "status" && !form.employee_id && value === "Assigned") {
+            return;
+        }
+
         setForm({
             ...form,
-            [e.target.name]: e.target.value
+            [name]: value
         });
     };
 
@@ -59,7 +79,7 @@ const AddAsset = () => {
     };
 
     const inputClass =
-        "w-full rounded-lg border border-slate-600 bg-slate-950 px-4 py-3 text-slate-100 placeholder-slate-500 outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-900";
+        "w-full rounded-lg border border-slate-600 bg-slate-950 px-4 py-3 text-slate-100 placeholder:text-slate-500 outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-900";
     const selectClass = `${inputClass} appearance-none pr-12`;
 
     return (
@@ -151,10 +171,13 @@ const AddAsset = () => {
                             value={form.status}
                             onChange={handleChange}
                             required
+                            disabled={Boolean(form.employee_id)}
                             className={selectClass}
                         >
                             <option value="Available">Available</option>
-                            <option value="Assigned">Assigned</option>
+                            {form.employee_id && (
+                                <option value="Assigned">Assigned</option>
+                            )}
                             <option value="Maintenance">Maintenance</option>
                         </select>
                         <ChevronDown className="pointer-events-none absolute right-4 top-1/2 -translate-y-1/2 text-slate-400" size={18} />
@@ -166,13 +189,19 @@ const AddAsset = () => {
                         Purchase Date
                     </label>
 
-                    <input
-                        type="date"
-                        name="purchase_date"
-                        value={form.purchase_date}
-                        onChange={handleChange}
-                        className={inputClass}
-                    />
+                    <div
+                        className="[color-scheme:dark]"
+                        onClick={() => purchaseDateRef.current?.showPicker?.()}
+                    >
+                        <input
+                            ref={purchaseDateRef}
+                            type="date"
+                            name="purchase_date"
+                            value={form.purchase_date}
+                            onChange={handleChange}
+                            className={`${inputClass} [&::-webkit-calendar-picker-indicator]:opacity-70`}
+                        />
+                    </div>
                 </div>
 
                 <div>
