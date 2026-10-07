@@ -149,15 +149,79 @@ export const createAsset = async (req, res) => {
 export const updateAsset = async (req, res) => {
     try {
         const { id } = req.params;
+        const currentAssetResult = await pool.query(
+            "SELECT * FROM assets WHERE id = $1",
+            [id]
+        );
+
+        if (currentAssetResult.rows.length === 0) {
+            return res.status(404).json({
+                message: "Asset not found"
+            });
+        }
+
+        const currentAsset = currentAssetResult.rows[0];
 
         const {
+            asset_name: requestedName,
+            asset_type: requestedType,
             name,
             type,
             serial_number,
+            employee_id,
             assigned_to,
             status,
             purchase_date
         } = req.body;
+
+        const assetName = (
+            requestedName ?? name ?? currentAsset.name ?? ""
+        ).trim();
+        const assetType = (
+            requestedType ?? type ?? currentAsset.type ?? ""
+        ).trim();
+        const serialNumber = (
+            serial_number ?? currentAsset.serial_number ?? ""
+        ).trim();
+
+        if (!assetName || !assetType || !serialNumber) {
+            return res.status(400).json({
+                success: false,
+                message: "Asset name, asset type, and serial number are required",
+            });
+        }
+
+        let assignedEmployeeId = null;
+        let assignedEmployeeName = null;
+
+        const requestedEmployeeId = employee_id ?? assigned_to;
+
+        if (
+            requestedEmployeeId !== undefined &&
+            requestedEmployeeId !== null &&
+            requestedEmployeeId !== ""
+        ) {
+            const employeeResult = await pool.query(
+                "SELECT id, name FROM employees WHERE id = $1",
+                [requestedEmployeeId]
+            );
+
+            if (employeeResult.rows.length === 0) {
+                return res.status(404).json({
+                    success: false,
+                    message: "Selected employee does not exist",
+                });
+            }
+
+            assignedEmployeeId = employeeResult.rows[0].id;
+            assignedEmployeeName = employeeResult.rows[0].name;
+        }
+
+        const assetStatus = assignedEmployeeId
+            ? "Assigned"
+            : status === "Maintenance"
+                ? "Maintenance"
+                : "Available";
 
         const result = await pool.query(
             `UPDATE assets
@@ -165,21 +229,29 @@ export const updateAsset = async (req, res) => {
                 name = $1,
                 type = $2,
                 serial_number = $3,
-                assigned_to = $4,
-                status = $5,
-                purchase_date = $6
-             WHERE id = $7
+                employee_id = $4,
+                assigned_to = $5,
+                status = $6,
+                purchase_date = $7
+             WHERE id = $8
              RETURNING *`,
             [
-                name,
-                type,
-                serial_number,
-                assigned_to,
-                status,
-                purchase_date,
+                assetName,
+                assetType,
+                serialNumber,
+                assignedEmployeeId,
+                assignedEmployeeName,
+                assetStatus,
+                purchase_date ?? currentAsset.purchase_date,
                 id
             ]
         );
+
+        if (result.rows.length === 0) {
+            return res.status(404).json({
+                message: "Asset not found"
+            });
+        }
 
         if (result.rows.length === 0) {
             return res.status(404).json({

@@ -1,23 +1,29 @@
 import { useEffect, useRef, useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import { ChevronDown } from "lucide-react";
 
-import { createAsset } from "../services/assetService";
+import { createAsset, updateAsset } from "../services/assetService";
 import { getEmployees } from "../services/employeeService";
 
 const AddAsset = () => {
     const navigate = useNavigate();
+    const location = useLocation();
+    const editingAsset = location.state?.asset;
 
     const [employees, setEmployees] = useState([]);
 
-    const [form, setForm] = useState({
-        asset_name: "",
-        asset_type: "",
-        serial_number: "",
-        status: "Available",
-        purchase_date: "",
-        employee_id: ""
-    });
+    const [form, setForm] = useState(() => ({
+        asset_name: editingAsset?.name || editingAsset?.asset_name || "",
+        asset_type: editingAsset?.type || editingAsset?.asset_type || "",
+        serial_number: editingAsset?.serial_number || "",
+        status: editingAsset?.status || "Available",
+        purchase_date: editingAsset?.purchase_date
+            ? new Date(editingAsset.purchase_date).toISOString().slice(0, 10)
+            : "",
+        employee_id: editingAsset?.employee_id
+            ? String(editingAsset.employee_id)
+            : ""
+    }));
 
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState("");
@@ -29,19 +35,27 @@ const AddAsset = () => {
             .catch(err => setError(err.message));
     }, []);
 
+    const assignedEmployeeName = editingAsset?.employee_name || editingAsset?.assigned_to;
+    const existingEmployee = employees.find(
+        employee => employee.name === assignedEmployeeName
+    );
+    const selectedEmployeeId = form.employee_id || (
+        existingEmployee ? String(existingEmployee.id) : ""
+    );
+
     const handleChange = (e) => {
         const { name, value } = e.target;
 
         if (name === "employee_id") {
-            setForm({
-                ...form,
+            setForm(previous => ({
+                ...previous,
                 employee_id: value,
                 status: value
                     ? "Assigned"
-                    : form.status === "Assigned"
+                    : previous.status === "Assigned"
                         ? "Available"
-                        : form.status
-            });
+                        : previous.status
+            }));
             return;
         }
 
@@ -49,10 +63,10 @@ const AddAsset = () => {
             return;
         }
 
-        setForm({
-            ...form,
+        setForm(previous => ({
+            ...previous,
             [name]: value
-        });
+        }));
     };
 
     const handleSubmit = async (e) => {
@@ -62,12 +76,20 @@ const AddAsset = () => {
         setError("");
 
         try {
-            await createAsset({
+            const payload = {
                 ...form,
-                employee_id: form.employee_id
-                    ? Number(form.employee_id)
+                name: form.asset_name,
+                type: form.asset_type,
+                employee_id: selectedEmployeeId
+                    ? Number(selectedEmployeeId)
                     : null
-            });
+            };
+
+            if (editingAsset) {
+                await updateAsset(editingAsset.id, payload);
+            } else {
+                await createAsset(payload);
+            }
 
             navigate("/assets");
 
@@ -87,11 +109,13 @@ const AddAsset = () => {
 
             <div>
                 <h1 className="text-3xl font-bold text-slate-100">
-                    Add Asset
+                {editingAsset ? "Edit Asset" : "Add Asset"}
                 </h1>
 
                 <p className="mt-1 text-slate-400">
-                    Register a new organizational asset.
+                    {editingAsset
+                        ? "Update asset information."
+                        : "Register a new organizational asset."}
                 </p>
             </div>
 
@@ -206,17 +230,17 @@ const AddAsset = () => {
 
                 <div>
                     <label className="mb-2 block text-sm font-medium">
-                        Assign Employee
+                        Assigned To
                     </label>
 
                     <div className="relative">
                         <select
                             name="employee_id"
-                            value={form.employee_id}
+                            value={selectedEmployeeId}
                             onChange={handleChange}
                             className={selectClass}
                         >
-                            <option value="">Unassigned</option>
+                                <option value="">Unassigned</option>
 
                             {employees.map(employee => (
                                 <option
@@ -246,7 +270,11 @@ const AddAsset = () => {
                         disabled={loading}
                         className="rounded-lg bg-blue-600 px-6 py-3 font-medium text-white hover:bg-blue-700 disabled:opacity-60"
                     >
-                        {loading ? "Saving..." : "Create Asset"}
+                        {loading
+                            ? "Saving..."
+                            : editingAsset
+                                ? "Save Changes"
+                                : "Create Asset"}
                     </button>
 
                 </div>

@@ -1,7 +1,6 @@
 import { useEffect, useState } from "react";
-import { Link } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import {
-    Plus,
     Package,
     CalendarDays,
     UserRound,
@@ -14,14 +13,15 @@ import { getAssets, updateAsset } from "../services/assetService";
 import StatusBadge from "../components/StatusBadge";
 
 const Assets = () => {
+    const navigate = useNavigate();
     const [assets, setAssets] = useState([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState("");
-
     const [selectedAsset, setSelectedAsset] = useState(null);
     const [formData, setFormData] = useState({});
     const [saving, setSaving] = useState(false);
     const [saveError, setSaveError] = useState("");
+
 
     const fetchAssets = async () => {
         try {
@@ -46,23 +46,6 @@ const Assets = () => {
         fetchAssets();
     }, []);
 
-    const handleEdit = (asset) => {
-        setSelectedAsset(asset);
-
-        setFormData({
-            name: asset.name || asset.asset_name || "",
-            type: asset.type || asset.asset_type || "",
-            serial_number: asset.serial_number || "",
-            assigned_to: asset.assigned_to || "",
-            status: asset.status || "Available",
-            purchase_date: asset.purchase_date
-                ? new Date(asset.purchase_date).toISOString().slice(0, 10)
-                : "",
-        });
-
-        setSaveError("");
-    };
-
     const handleChange = (e) => {
         const { name, value } = e.target;
 
@@ -74,37 +57,13 @@ const Assets = () => {
 
     const handleUpdate = async (e) => {
         e.preventDefault();
+        if (!selectedAsset) return;
 
         try {
             setSaving(true);
             setSaveError("");
-
-            const response = await updateAsset(
-                selectedAsset.id,
-                {
-                    name: formData.name,
-                    type: formData.type,
-                    serial_number: formData.serial_number,
-                    assigned_to: formData.assigned_to,
-                    status: formData.status,
-                    purchase_date: formData.purchase_date || null,
-                }
-            );
-
-            const updatedAsset = response?.asset || response?.data?.asset;
-
-            setAssets((prev) =>
-                prev.map((asset) =>
-                    asset.id === selectedAsset.id
-                        ? {
-                            ...asset,
-                            ...formData,
-                            ...(updatedAsset || {}),
-                        }
-                        : asset
-                )
-            );
-
+            await updateAsset(selectedAsset.id, formData);
+            await fetchAssets();
             setSelectedAsset(null);
         } catch (err) {
             setSaveError(err.message || "Failed to update asset");
@@ -269,7 +228,11 @@ const Assets = () => {
                                     <td className="whitespace-nowrap px-6 py-4 text-center">
                                         <button
                                             type="button"
-                                            onClick={() => handleEdit(asset)}
+                                            onClick={() =>
+                                                navigate("/assets/add", {
+                                                    state: { asset },
+                                                })
+                                            }
                                             className="inline-flex items-center gap-2 text-blue-400 transition hover:text-blue-300"
                                         >
                                             <Pencil size={17} />
