@@ -190,7 +190,7 @@ Employee endpoints:
 ## Repository structure
 
 ```text
-simple_nodejs_app/
+Asset_Tracker_Application/
 ├── backend/
 │   ├── src/
 │   │   ├── config/              # Database configuration
@@ -261,8 +261,8 @@ Do not commit real passwords or JWT secrets. Use repository or environment secre
 ### Start the application
 
 ```bash
-git clone https://github.com/vaishnavipawardottech/simple_nodejs_app.git
-cd simple_nodejs_app
+git clone https://github.com/vaishnavipawardottech/Asset_Tracker_Application.git
+cd Asset_Tracker_Application
 cp .env.example .env
 docker compose up -d
 ```
