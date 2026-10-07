@@ -10,27 +10,21 @@ Add screenshots for the main application modules in the placeholders below.
 
 ### Login and registration
 
-> **Screenshot placeholder:** Add the login and registration screenshot here.
->
-> Suggested path: `docs/screenshots/auth.png`
+![Login](/docs/Login.png)
+![Register](docs/Register.png)
 
 ### Dashboard
 
-> **Screenshot placeholder:** Add the dashboard screenshot here.
->
-> Suggested path: `docs/screenshots/dashboard.png`
+![Dashboard](docs/Dashboard.png)
 
 ### Asset management
 
-> **Screenshot placeholder:** Add the asset management screenshot here.
->
-> Suggested path: `docs/screenshots/assets.png`
+![Asset](docs/Asset.png)
 
 ### Employee management
 
-> **Screenshot placeholder:** Add the employee management screenshot here.
->
-> Suggested path: `docs/screenshots/employees.png`
+![Employees](docs/Employees.png)
+![EmployeeInfo](docs/EmployeesInfo.png)
 
 ## Highlights
 
