@@ -115,7 +115,7 @@ const Dashboard = () => {
             </div>
 
             {/* Statistics Cards */}
-            <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 xl:grid-cols-4">
+            <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-4">
 
                 <StatCard
                     title="Total Assets"
@@ -178,6 +178,14 @@ const Dashboard = () => {
                                 </th>
 
                                 <th className="whitespace-nowrap px-6 py-4">
+                                    Asset Type
+                                </th>
+
+                                <th className="whitespace-nowrap px-6 py-4">
+                                    Serial Number
+                                </th>
+
+                                <th className="whitespace-nowrap px-6 py-4">
                                     Status
                                 </th>
 
@@ -212,6 +220,16 @@ const Dashboard = () => {
                                                     "—"}
                                             </span>
                                         </div>
+                                    </td>
+
+                                    {/* Asset Type */}
+                                    <td className="whitespace-nowrap px-6 py-4 text-slate-400">
+                                        {asset.type || asset.asset_type || "—"}
+                                    </td>
+
+                                    {/* Serial Number */}
+                                    <td className="whitespace-nowrap px-6 py-4 text-slate-400">
+                                        {asset.serial_number || "—"}
                                     </td>
 
                                     {/* Status */}
@@ -267,7 +285,7 @@ const Dashboard = () => {
                             {assets.length === 0 && (
                                 <tr>
                                     <td
-                                        colSpan={4}
+                                        colSpan={6}
                                         className="px-6 py-16 text-center"
                                     >
                                         <div className="flex flex-col items-center gap-3">
