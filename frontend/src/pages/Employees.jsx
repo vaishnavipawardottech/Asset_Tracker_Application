@@ -29,9 +29,6 @@ const Employees = () => {
                         Employees
                     </h1>
 
-                    {/* <p className="mt-1 text-slate-400">
-                        Manage employees and their assigned assets.
-                    </p> */}
                 </div>
 
                 <span className="rounded-full bg-blue-900/70 px-3 py-1 text-xs font-semibold text-blue-300">

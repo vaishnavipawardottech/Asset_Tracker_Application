@@ -112,10 +112,6 @@ const Assets = () => {
                     <h1 className="text-3xl font-bold tracking-tight text-slate-100">
                         Assets
                     </h1>
-{/* 
-                    <p className="mt-1 text-sm text-slate-400">
-                        View and manage organizational assets.
-                    </p> */}
                 </div>
 
             </div>

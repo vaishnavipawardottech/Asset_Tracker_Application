@@ -59,9 +59,6 @@ const AddEmployee = () => {
                     Add Employee
                 </h1>
 
-                {/* <p className="mt-1 text-slate-400">
-                    Enter employee details.
-                </p> */}
             </div>
 
             <form
