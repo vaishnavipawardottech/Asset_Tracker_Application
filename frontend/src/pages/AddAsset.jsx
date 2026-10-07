@@ -1,9 +1,9 @@
 import { useEffect, useRef, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
-import { ChevronDown } from "lucide-react";
 
 import { createAsset, updateAsset } from "../services/assetService";
 import { getEmployees } from "../services/employeeService";
+import CustomDropdown from "../components/CustomDropdown";
 
 const AddAsset = () => {
     const navigate = useNavigate();
@@ -102,8 +102,6 @@ const AddAsset = () => {
 
     const inputClass =
         "w-full rounded-lg border border-slate-600 bg-slate-950 px-4 py-3 text-slate-100 placeholder:text-slate-500 outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-900";
-    const selectClass = `${inputClass} appearance-none pr-12`;
-
     return (
         <div className="w-full space-y-6">
 
@@ -111,12 +109,6 @@ const AddAsset = () => {
                 <h1 className="text-3xl font-bold text-slate-100">
                 {editingAsset ? "Edit Asset" : "Add Asset"}
                 </h1>
-
-                <p className="mt-1 text-slate-400">
-                    {editingAsset
-                        ? "Update asset information."
-                        : "Register a new organizational asset."}
-                </p>
             </div>
 
             <form
@@ -150,23 +142,20 @@ const AddAsset = () => {
                         Asset Type *
                     </label>
 
-                    <div className="relative">
-                        <select
-                            name="asset_type"
-                            value={form.asset_type}
-                            onChange={handleChange}
-                            required
-                            className={selectClass}
-                        >
-                            <option value="">Select type</option>
-                            <option value="Laptop">Laptop</option>
-                            <option value="Monitor">Monitor</option>
-                            <option value="Mouse">Mouse</option>
-                            <option value="Keyboard">Keyboard</option>
-                            <option value="Other">Other</option>
-                        </select>
-                        <ChevronDown className="pointer-events-none absolute right-4 top-1/2 -translate-y-1/2 text-slate-400" size={18} />
-                    </div>
+                    <CustomDropdown
+                        value={form.asset_type}
+                        onChange={(value) =>
+                            handleChange({ target: { name: "asset_type", value } })
+                        }
+                        placeholder="Select type"
+                        options={[
+                            { value: "Laptop", label: "Laptop" },
+                            { value: "Monitor", label: "Monitor" },
+                            { value: "Mouse", label: "Mouse" },
+                            { value: "Keyboard", label: "Keyboard" },
+                            { value: "Other", label: "Other" },
+                        ]}
+                    />
                 </div>
 
                 <div>
@@ -189,23 +178,20 @@ const AddAsset = () => {
                         Status *
                     </label>
 
-                    <div className="relative">
-                        <select
-                            name="status"
-                            value={form.status}
-                            onChange={handleChange}
-                            required
-                            disabled={Boolean(form.employee_id)}
-                            className={selectClass}
-                        >
-                            <option value="Available">Available</option>
-                            {form.employee_id && (
-                                <option value="Assigned">Assigned</option>
-                            )}
-                            <option value="Maintenance">Maintenance</option>
-                        </select>
-                        <ChevronDown className="pointer-events-none absolute right-4 top-1/2 -translate-y-1/2 text-slate-400" size={18} />
-                    </div>
+                    <CustomDropdown
+                        value={form.status}
+                        onChange={(value) =>
+                            handleChange({ target: { name: "status", value } })
+                        }
+                        disabled={Boolean(form.employee_id)}
+                        options={[
+                            { value: "Available", label: "Available" },
+                            ...(form.employee_id
+                                ? [{ value: "Assigned", label: "Assigned" }]
+                                : []),
+                            { value: "Maintenance", label: "Maintenance" },
+                        ]}
+                    />
                 </div>
 
                 <div>
@@ -233,26 +219,20 @@ const AddAsset = () => {
                         Assigned To
                     </label>
 
-                    <div className="relative">
-                        <select
-                            name="employee_id"
-                            value={selectedEmployeeId}
-                            onChange={handleChange}
-                            className={selectClass}
-                        >
-                                <option value="">Unassigned</option>
-
-                            {employees.map(employee => (
-                                <option
-                                    key={employee.id}
-                                    value={employee.id}
-                                >
-                                    {employee.name} ({employee.email})
-                                </option>
-                            ))}
-                        </select>
-                        <ChevronDown className="pointer-events-none absolute right-4 top-1/2 -translate-y-1/2 text-slate-400" size={18} />
-                    </div>
+                    <CustomDropdown
+                        value={selectedEmployeeId}
+                        onChange={(value) =>
+                            handleChange({ target: { name: "employee_id", value } })
+                        }
+                        placeholder="Unassigned"
+                        options={[
+                            { value: "", label: "Unassigned" },
+                            ...employees.map((employee) => ({
+                                value: String(employee.id),
+                                label: `${employee.name} (${employee.email})`,
+                            })),
+                        ]}
+                    />
                 </div>
 
                 <div className="flex justify-end gap-3 pt-4">

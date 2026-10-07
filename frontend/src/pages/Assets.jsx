@@ -11,6 +11,7 @@ import {
 
 import { getAssets, updateAsset } from "../services/assetService";
 import StatusBadge from "../components/StatusBadge";
+import CustomDropdown from "../components/CustomDropdown";
 
 const Assets = () => {
     const navigate = useNavigate();
@@ -21,6 +22,7 @@ const Assets = () => {
     const [formData, setFormData] = useState({});
     const [saving, setSaving] = useState(false);
     const [saveError, setSaveError] = useState("");
+    const [statusFilter, setStatusFilter] = useState("all");
 
 
     const fetchAssets = async () => {
@@ -45,6 +47,22 @@ const Assets = () => {
     useEffect(() => {
         fetchAssets();
     }, []);
+
+    const statusOptions = [
+        ...new Set(
+            assets
+                .map((asset) => asset.status)
+                .filter(Boolean)
+        ),
+    ];
+
+    const filteredAssets =
+        statusFilter === "all"
+            ? assets
+            : assets.filter(
+                (asset) =>
+                    asset.status?.toLowerCase() === statusFilter.toLowerCase()
+            );
 
     const handleChange = (e) => {
         const { name, value } = e.target;
@@ -92,12 +110,12 @@ const Assets = () => {
             <div className="flex flex-wrap items-center justify-between gap-4">
                 <div>
                     <h1 className="text-3xl font-bold tracking-tight text-slate-100">
-                        All Assets
+                        Assets
                     </h1>
-
+{/* 
                     <p className="mt-1 text-sm text-slate-400">
                         View and manage organizational assets.
-                    </p>
+                    </p> */}
                 </div>
 
             </div>
@@ -109,20 +127,24 @@ const Assets = () => {
                 </div>
             )}
 
-            {/* Asset Count */}
-            <div className="flex items-center gap-3 rounded-xl border border-slate-700 bg-slate-900 p-4 shadow-sm">
-                <div className="flex h-11 w-11 items-center justify-center rounded-lg bg-blue-900/70 text-blue-300">
-                    <Package size={22} />
-                </div>
+            {/* Status Filter */}
+            <div className="flex items-center justify-between gap-4">
+                <CustomDropdown
+                    value={statusFilter}
+                    onChange={setStatusFilter}
+                    options={[
+                        { value: "all", label: "Status" },
+                        ...statusOptions.map((status) => ({
+                            value: status,
+                            label: status,
+                        })),
+                    ]}
+                    className="w-44"
+                />
 
-                <div>
-                    <p className="text-sm text-slate-400">
-                        Total Assets
-                    </p>
-                    <p className="text-xl font-bold text-slate-100">
-                        {assets.length}
-                    </p>
-                </div>
+                <span className="rounded-full bg-blue-900/70 px-3 py-1 text-xs font-semibold text-blue-300">
+                    {assets.length} Assets
+                </span>
             </div>
 
             {/* Assets Table */}
@@ -163,7 +185,7 @@ const Assets = () => {
                         </thead>
 
                         <tbody className="divide-y divide-slate-700">
-                            {assets.map((asset) => (
+                            {filteredAssets.map((asset) => (
                                 <tr
                                     key={asset.id}
                                     className="transition hover:bg-slate-800"
@@ -242,7 +264,7 @@ const Assets = () => {
                                 </tr>
                             ))}
 
-                            {assets.length === 0 && (
+                            {filteredAssets.length === 0 && (
                                 <tr>
                                     <td
                                         colSpan={7}
@@ -255,11 +277,15 @@ const Assets = () => {
                                             />
 
                                             <p className="font-medium text-slate-300">
-                                                No assets found
+                                                {statusFilter === "all"
+                                                    ? "No assets found"
+                                                    : "No assets match this status"}
                                             </p>
 
                                             <p className="text-sm text-slate-400">
-                                                Start by adding your first asset.
+                                                {statusFilter === "all"
+                                                    ? "Start by adding your first asset."
+                                                    : "Try selecting a different status filter."}
                                             </p>
                                         </div>
                                     </td>
