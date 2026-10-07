@@ -1,9 +1,9 @@
 services:
   frontend:
-    # image: pawarvaishnavi/asset-tracker-frontend:multistage
-    build: 
-      context: ./frontend
-      dockerfile: Dockerfile.multistage
+    image: pawarvaishnavi/asset-tracker-frontend:v4
+    # build: 
+    #   context: ./frontend
+    #   dockerfile: Dockerfile.multistage
     container_name: asset-tracker-frontend
     ports:
       - "${FRONTEND_HOST_PORT}:5173"
@@ -16,10 +16,10 @@ services:
   
 
   backend:
-    # image: pawarvaishnavi/asset-tracker-backend:multistage
-    build: 
-      context: ./backend
-      dockerfile: Dockerfile.multistage
+    image: pawarvaishnavi/asset-tracker-backend:v4
+    # build: 
+    #   context: ./backend
+    #   dockerfile: Dockerfile.multistage
     container_name: asset-tracker-backend
     ports:
       - "${BACKEND_HOST_PORT}:${BACKEND_PORT}"
@@ -30,6 +30,8 @@ services:
       DB_NAME: ${POSTGRES_DB}
       DB_PASSWORD: ${POSTGRES_PASSWORD}
       DB_PORT: ${POSTGRES_PORT}
+      JWT_ACCESS_SECRET: ${JWT_ACCESS_SECRET}
+      JWT_REFRESH_SECRET: ${JWT_REFRESH_SECRET}
     restart: unless-stopped
     depends_on:
       postgres:
