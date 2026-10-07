@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
-import { Plus, Eye } from "lucide-react";
+import { Eye } from "lucide-react";
 
 import { getEmployees } from "../services/employeeService";
 
@@ -26,14 +26,17 @@ const Employees = () => {
             <div className="flex flex-wrap items-center justify-between gap-4">
                 <div>
                     <h1 className="text-3xl font-bold text-slate-100">
-                        All Employees
+                        Employees
                     </h1>
 
-                    <p className="mt-1 text-slate-400">
+                    {/* <p className="mt-1 text-slate-400">
                         Manage employees and their assigned assets.
-                    </p>
+                    </p> */}
                 </div>
 
+                <span className="rounded-full bg-blue-900/70 px-3 py-1 text-xs font-semibold text-blue-300">
+                    {employees.length} Employees
+                </span>
             </div>
 
             {error && (
