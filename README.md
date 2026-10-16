@@ -6,8 +6,6 @@ The project is designed as a production-style deployment exercise using React, N
 
 ## Screenshots
 
-Add screenshots for the main application modules in the placeholders below.
-
 ### Login and registration
 
 ![Login](/docs/Login.png)
