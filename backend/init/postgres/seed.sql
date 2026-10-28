@@ -35,7 +35,7 @@ ON CONFLICT (email) DO NOTHING;
 -- 2. Seed employees
 INSERT INTO employees (name, email, phone, department, designation)
 VALUES
-    ('Akash Verma', 'akash.verma@example.com',
+    ('Akash Sharma', 'akash.sharma@example.com',
      '9876543210', 'Engineering', 'Software Engineer'),
     ('Riya Agarwal', 'riya.agarwal@example.com',
      '9876543211', 'IT', 'System Administrator'),
@@ -52,21 +52,21 @@ VALUES
         'Dell Latitude 5440',
         'Laptop',
         'DL-001',
-        'Akash Verma',
+        'Akash Sharma',
         'Assigned',
         '2026-01-15',
         (SELECT id FROM employees
-         WHERE email = 'akash.verma@example.com')
+         WHERE email = 'akash.sharma@example.com')
     ),
     (
         'HP Monitor',
         'Monitor',
         'HP-001',
-        'Akash Verma',
+        'Akash Sharma',
         'Assigned',
         '2026-02-10',
         (SELECT id FROM employees
-         WHERE email = 'akash.verma@example.com')
+         WHERE email = 'akash.sharma@example.com')
     ),
     (
         'Server-01',
