@@ -74,9 +74,9 @@ function Login() {
             </p>
           </div>
 
-          <p className="text-sm text-slate-400">
+          {/* <p className="text-sm text-slate-400">
             Asset Tracker Application
-          </p>
+          </p> */}
         </div>
 
         {/* Right Side */}
