@@ -1,8 +1,53 @@
 import pool from "../config/db.js";
 
+// Get assets assigned to the authenticated employee
+export const getMyAssets = async (req, res) => {
+  try {
+    if (req.user.role !== "employee") {
+      return res.status(403).json({
+        success: false,
+        message: "Only employees can access personal assets",
+      });
+    }
+
+    const employeeId = Number(req.user.userId);
+
+    if (!Number.isInteger(employeeId) || employeeId <= 0) {
+      return res.status(401).json({
+        success: false,
+        message: "Invalid employee authentication",
+      });
+    }
+
+    const result = await pool.query(
+      `SELECT
+          a.*,
+          e.name AS employee_name
+       FROM assets a
+       INNER JOIN employees e ON e.id = a.employee_id
+       WHERE a.employee_id = $1
+       ORDER BY a.id DESC`,
+      [employeeId]
+    );
+
+    return res.status(200).json({
+      success: true,
+      assets: result.rows,
+    });
+  } catch (error) {
+    console.error("Error fetching employee assets:", error);
+
+    return res.status(500).json({
+      success: false,
+      message: "Failed to fetch employee assets",
+    });
+  }
+};
+
 // Get all assets
 export const getAllAssets = async (req, res) => {
   try {
+    const isEmployee = req.user.role === "employee";
     const result = await pool.query(`
       SELECT
         a.*,
@@ -10,8 +55,9 @@ export const getAllAssets = async (req, res) => {
       FROM assets a
       LEFT JOIN employees e
         ON a.employee_id = e.id
+      ${isEmployee ? "WHERE a.employee_id = $1" : ""}
       ORDER BY a.id DESC
-    `);
+    `, isEmployee ? [req.user.userId] : []);
 
     return res.status(200).json({
       success: true,
@@ -31,10 +77,21 @@ export const getAllAssets = async (req, res) => {
 export const getAssetById = async (req, res) => {
     try {
         const { id } = req.params;
+        const assetId = Number(id);
 
+        if (!Number.isInteger(assetId) || assetId <= 0) {
+            return res.status(400).json({
+                message: "Invalid asset ID"
+            });
+        }
+
+        const isEmployee = req.user.role === "employee";
         const result = await pool.query(
-            "SELECT * FROM assets WHERE id = $1",
-            [id]
+            `SELECT *
+             FROM assets
+             WHERE id = $1
+             ${isEmployee ? "AND employee_id = $2" : ""}`,
+            isEmployee ? [assetId, req.user.userId] : [assetId]
         );
 
         if (result.rows.length === 0) {

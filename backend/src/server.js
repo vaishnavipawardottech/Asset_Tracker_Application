@@ -2,9 +2,11 @@ import express from "express";
 import cors from "cors";
 import dotenv from "dotenv";
 
-import assetRoutes from "./routes/assetRoutes.js";
-import authRoutes from "./routes/authRoutes.js";
+import assetsRoutes from "./routes/assetsRoutes.js";
+import adminRoutes from "./routes/adminRoutes.js";
 import employeeRoutes from "./routes/employeeRoutes.js";
+import authRoutes from "./routes/authRoutes.js";
+import requestRoutes from "./routes/requestRoutes.js";
 
 dotenv.config();
 
@@ -28,11 +30,14 @@ app.get("/health", (req, res) => {
 });
 
 // Authentication APIs
-app.use("/api/auth", authRoutes);
+app.use("/api/admin", adminRoutes);
+app.use("/api", authRoutes);
 // Asset APIs
-app.use("/api/assets", assetRoutes);
+app.use("/api/assets", assetsRoutes);
 // Employees APIs
 app.use("/api/employees", employeeRoutes);
+// Request workflow APIs
+app.use("/api/requests", requestRoutes);
 
 const PORT = process.env.PORT || 5000;
 
