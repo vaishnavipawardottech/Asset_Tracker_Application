@@ -44,17 +44,17 @@ The project is designed as a production-style deployment exercise using React, N
 
 ```text
                          User
-                           │
-                           ▼
+                           â”‚
+                           â–¼
                     React + Vite UI
                          :5173
-                           │
-                           │ /api requests
-                           ▼
+                           â”‚
+                           â”‚ /api requests
+                           â–¼
                   Node.js + Express API
                          :5000
-                           │
-                           ▼
+                           â”‚
+                           â–¼
                     PostgreSQL database
                          :5432
 ```
@@ -63,19 +63,19 @@ The project is designed as a production-style deployment exercise using React, N
 
 ```text
                           GitHub repository
-                                  │
-                                  ▼
+                                  â”‚
+                                  â–¼
                          GitHub Actions workflows
-                                  │
-            ┌─────────────────────┼─────────────────────┐
-            ▼                     ▼                     ▼
+                                  â”‚
+            â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”¼â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”
+            â–¼                     â–¼                     â–¼
        Lint and tests       Security checks       Docker build
-                                                        │
-                                                        ▼
+                                                        â”‚
+                                                        â–¼
                                                   Docker Hub
-                                                        │
-                                  ┌─────────────────────┴─────────────────────┐
-                                  ▼                                           ▼
+                                                        â”‚
+                                  â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”´â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”
+                                  â–¼                                           â–¼
                            Docker Compose                              Kubernetes cluster
 ```
 
@@ -129,9 +129,11 @@ Authentication endpoints:
 
 | Method | Endpoint | Access |
 | --- | --- | --- |
-| `POST` | `/api/auth/register` | Public |
-| `POST` | `/api/auth/login` | Public |
-| `POST` | `/api/auth/logout` | Bearer token required |
+| `POST` | `/api/admin/register` | Public |
+| `POST` | `/api/admin/login` | Public |
+| `POST` | `/api/admin/logout` | Authenticated |
+| `POST` | `/api/employees/login` | Public |
+| `POST` | `/api/employees/logout` | Authenticated |
 
 ### Dashboard
 
@@ -179,6 +181,9 @@ Employee endpoints:
 
 | Method | Endpoint | Access |
 | --- | --- | --- |
+| `POST` | `/api/employees/login` | Public |
+| `POST` | `/api/employees/logout` | ****** required |
+
 | `POST` | `/api/employees` | Bearer token required |
 | `GET` | `/api/employees` | Bearer token required |
 | `GET` | `/api/employees/:id` | Bearer token required |
@@ -189,29 +194,29 @@ Employee endpoints:
 
 ```text
 Asset_Tracker_Application/
-├── backend/
-│   ├── src/
-│   │   ├── config/              # Database configuration
-│   │   ├── controllers/         # Authentication, asset, and employee logic
-│   │   ├── middlewares/         # JWT authentication middleware
-│   │   ├── routes/              # Express API routes
-│   │   └── server.js            # API entry point
-│   ├── init/postgres/           # Database initialization and seed SQL
-│   ├── Dockerfile.multistage
-│   └── package.json
-├── frontend/
-│   ├── src/
-│   │   ├── components/          # Shared UI components
-│   │   ├── pages/               # Application screens
-│   │   └── services/            # API and authentication services
-│   ├── Dockerfile.multistage
-│   ├── vite.config.js
-│   └── package.json
-├── kind/                        # Kubernetes namespace, workloads, services, and storage
-├── .github/workflows/           # CI/CD and security workflows
-├── docker-compose.yml           # Local multi-container runtime
-├── .env.example                 # Environment variable template
-└── README.md
+â”œâ”€â”€ backend/
+â”‚   â”œâ”€â”€ src/
+â”‚   â”‚   â”œâ”€â”€ config/              # Database configuration
+â”‚   â”‚   â”œâ”€â”€ controllers/         # Authentication, asset, and employee logic
+â”‚   â”‚   â”œâ”€â”€ middlewares/         # JWT authentication middleware
+â”‚   â”‚   â”œâ”€â”€ routes/              # Express API routes
+â”‚   â”‚   â””â”€â”€ server.js            # API entry point
+â”‚   â”œâ”€â”€ init/postgres/           # Database initialization and seed SQL
+â”‚   â”œâ”€â”€ Dockerfile.multistage
+â”‚   â””â”€â”€ package.json
+â”œâ”€â”€ frontend/
+â”‚   â”œâ”€â”€ src/
+â”‚   â”‚   â”œâ”€â”€ components/          # Shared UI components
+â”‚   â”‚   â”œâ”€â”€ pages/               # Application screens
+â”‚   â”‚   â””â”€â”€ services/            # API and authentication services
+â”‚   â”œâ”€â”€ Dockerfile.multistage
+â”‚   â”œâ”€â”€ vite.config.js
+â”‚   â””â”€â”€ package.json
+â”œâ”€â”€ kind/                        # Kubernetes namespace, workloads, services, and storage
+â”œâ”€â”€ .github/workflows/           # CI/CD and security workflows
+â”œâ”€â”€ docker-compose.yml           # Local multi-container runtime
+â”œâ”€â”€ .env.example                 # Environment variable template
+â””â”€â”€ README.md
 ```
 
 ## Environment configuration
@@ -488,15 +493,15 @@ The top-level workflows are currently configured for manual execution with `work
 
 ```text
 Checkout
-  ↓
+  â†“
 Install dependencies
-  ↓
+  â†“
 Lint and test frontend + backend
-  ↓
+  â†“
 Build and scan Docker images
-  ↓
+  â†“
 Push images to Docker Hub
-  ↓
+  â†“
 Deploy with Docker Compose
 ```
 
@@ -537,7 +542,7 @@ docker compose logs backend
 curl http://localhost:5000/health
 ```
 
-When running in Compose, containers must use the service name `backend` to reach the backend—not `localhost`.
+When running in Compose, containers must use the service name `backend` to reach the backendâ€”not `localhost`.
 
 ### Database connection errors
 
