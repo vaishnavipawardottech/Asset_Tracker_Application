@@ -1,7 +1,10 @@
 import express from "express";
 
 import {
-    createEmployee,
+    registerEmployee,
+    loginEmployee,
+    logoutEmployee,
+    getMyEmployeeAssets,
     getEmployees,
     getEmployeeById,
     updateEmployee,
@@ -12,10 +15,13 @@ import {authMiddleware} from "../middlewares/authMiddleware.js";
 
 const router = express.Router();
 
-router.post("/", authMiddleware, createEmployee);
+router.post("/login", loginEmployee);
+router.post("/logout", authMiddleware, logoutEmployee);
+router.post("/", authMiddleware, registerEmployee);
 
 router.get("/", authMiddleware, getEmployees);
 
+router.get("/me/assets", authMiddleware, getMyEmployeeAssets);
 router.get("/:id/assets", authMiddleware, getEmployeeWithAssets);
 
 router.get("/:id", authMiddleware, getEmployeeById);
