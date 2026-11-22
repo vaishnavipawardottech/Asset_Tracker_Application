@@ -12,6 +12,7 @@ import {
     LogOut,
     Package
 } from "lucide-react";
+import { getCurrentUser } from "../services/authService";
 
 const Sidebar = () => {
     const [employeesOpen, setEmployeesOpen] = useState(true);
@@ -19,9 +20,8 @@ const Sidebar = () => {
 
     const navigate = useNavigate();
 
-    const user = JSON.parse(
-        localStorage.getItem("user") || "{}"
-    );
+    const user = getCurrentUser() || {};
+    const isEmployee = localStorage.getItem("accountType") === "employee";
 
     const linkClass = ({ isActive }) =>
         `flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm transition ${
@@ -41,6 +41,7 @@ const Sidebar = () => {
         localStorage.removeItem("accessToken");
         localStorage.removeItem("refreshToken");
         localStorage.removeItem("user");
+        localStorage.removeItem("accountType");
 
         navigate("/login", { replace: true });
     };
@@ -58,13 +59,15 @@ const Sidebar = () => {
 
             <nav className="flex-1 space-y-2 overflow-y-auto p-4">
 
-                <NavLink to="/dashboard" className={linkClass}>
-                    <LayoutDashboard size={19} />
-                    Dashboard
-                </NavLink>
+                {!isEmployee && (
+                    <NavLink to="/dashboard" className={linkClass}>
+                        <LayoutDashboard size={19} />
+                        Dashboard
+                    </NavLink>
+                )}
 
                 {/* Employees */}
-                <div>
+                {!isEmployee && <div>
                     <button
                         onClick={() => setEmployeesOpen(!employeesOpen)}
                         className="flex w-full items-center justify-between rounded-lg px-3 py-2.5 text-sm text-slate-300 hover:bg-slate-800"
@@ -84,25 +87,25 @@ const Sidebar = () => {
                         <div className="ml-5 mt-2 space-y-1 border-l border-slate-700 pl-3">
 
                             <NavLink
-                                to="/employees/add"
-                                className={subLinkClass}
-                            >
-                                <Plus size={16} />
-                                Add Employee
-                            </NavLink>
-
-                            <NavLink
                                 to="/employees"
                                 end
                                 className={subLinkClass}
                             >
-                                <List size={16} />
+                                {/* <List size={16} /> */}
                                 All Employees
+                            </NavLink>
+
+                            <NavLink
+                                to="/employees/add"
+                                className={subLinkClass}
+                            >
+                                {/* <Plus size={16} /> */}
+                                Add Employee
                             </NavLink>
 
                         </div>
                     )}
-                </div>
+                </div>}
 
                 {/* Assets */}
                 <div>
@@ -125,21 +128,23 @@ const Sidebar = () => {
                         <div className="ml-5 mt-2 space-y-1 border-l border-slate-700 pl-3">
 
                             <NavLink
-                                to="/assets/add"
-                                className={subLinkClass}
-                            >
-                                <Plus size={16} />
-                                Add Asset
-                            </NavLink>
-
-                            <NavLink
                                 to="/assets"
                                 end
                                 className={subLinkClass}
                             >
-                                <List size={16} />
-                                All Assets
+                                {/* <List size={16} /> */}
+                                {isEmployee ? "My Assets" : "All Assets"}
                             </NavLink>
+
+                            {!isEmployee && (
+                                <NavLink
+                                    to="/assets/add"
+                                    className={subLinkClass}
+                                >
+                                    {/* <Plus size={16} /> */}
+                                    Create Asset
+                                </NavLink>
+                            )}
 
                         </div>
                     )}

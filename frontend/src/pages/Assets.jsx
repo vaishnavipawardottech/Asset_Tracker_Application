@@ -23,6 +23,7 @@ const Assets = () => {
     const [saving, setSaving] = useState(false);
     const [saveError, setSaveError] = useState("");
     const [statusFilter, setStatusFilter] = useState("all");
+    const isEmployee = localStorage.getItem("accountType") === "employee";
 
 
     const fetchAssets = async () => {
@@ -174,9 +175,11 @@ const Assets = () => {
                                     Purchase Date
                                 </th>
 
-                                <th className="whitespace-nowrap px-6 py-4 text-center">
-                                    Action
-                                </th>
+                                {!isEmployee && (
+                                    <th className="whitespace-nowrap px-6 py-4 text-center">
+                                        Action
+                                    </th>
+                                )}
                             </tr>
                         </thead>
 
@@ -242,21 +245,22 @@ const Assets = () => {
                                         </div>
                                     </td>
 
-                                    {/* Edit Action */}
-                                    <td className="whitespace-nowrap px-6 py-4 text-center">
-                                        <button
-                                            type="button"
-                                            onClick={() =>
-                                                navigate("/assets/add", {
-                                                    state: { asset },
-                                                })
-                                            }
-                                            className="inline-flex items-center gap-2 text-blue-400 transition hover:text-blue-300"
-                                        >
-                                            <Pencil size={17} />
-                                            Edit
-                                        </button>
-                                    </td>
+                                    {!isEmployee && (
+                                        <td className="whitespace-nowrap px-6 py-4 text-center">
+                                            <button
+                                                type="button"
+                                                onClick={() =>
+                                                    navigate("/assets/add", {
+                                                        state: { asset },
+                                                    })
+                                                }
+                                                className="inline-flex items-center gap-2 text-blue-400 transition hover:text-blue-300"
+                                            >
+                                                <Pencil size={17} />
+                                                Edit
+                                            </button>
+                                        </td>
+                                    )}
                                 </tr>
                             ))}
 
