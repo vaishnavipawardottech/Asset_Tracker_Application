@@ -1,7 +1,11 @@
 import { apiRequest } from "./api";
 
 export const getAssets = async () => {
-    const data = await apiRequest("/assets");
+    const endpoint =
+        localStorage.getItem("accountType") === "employee"
+            ? "/assets/my"
+            : "/assets";
+    const data = await apiRequest(endpoint);
 
     return Array.isArray(data)
         ? data
