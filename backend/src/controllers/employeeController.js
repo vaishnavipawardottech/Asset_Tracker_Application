@@ -1,30 +1,66 @@
+import bcrypt from "bcryptjs";
+import jwt from "jsonwebtoken";
 import pool from "../config/db.js";
 
+const generateAccessToken = (employeeId) => {
+    return jwt.sign(
+        { userId: employeeId, role: "employee" },
+        process.env.JWT_ACCESS_SECRET,
+        { expiresIn: "15m" }
+    );
+};
+
+const generateRefreshToken = (employeeId) => {
+    return jwt.sign(
+        { userId: employeeId, role: "employee" },
+        process.env.JWT_REFRESH_SECRET,
+        { expiresIn: "7d" }
+    );
+};
+
 // CREATE EMPLOYEE
-export const createEmployee = async (req, res) => {
+export const registerEmployee = async (req, res) => {
     try {
         const {
             name,
             email,
+            password,
             phone,
             department,
             designation
         } = req.body;
 
-        if (!name || !email) {
+        if (!name || !email || !password) {
             return res.status(400).json({
-                message: "Name and email are required"
+                message: "Name, email, and password are required"
             });
         }
 
+        if (typeof name !== "string" ||
+            typeof email !== "string" ||
+            typeof password !== "string") {
+            return res.status(400).json({
+                message: "Invalid input"
+            });
+        }
+
+        if (password.length < 8) {
+            return res.status(400).json({
+                message: "Password must be at least 8 characters long"
+            });
+        }
+
+        const passwordHash = await bcrypt.hash(password, 12);
+
         const result = await pool.query(
             `INSERT INTO employees
-             (name, email, phone, department, designation)
-             VALUES ($1, $2, $3, $4, $5)
-             RETURNING *`,
+             (name, email, password_hash, phone, department, designation)
+             VALUES ($1, $2, $3, $4, $5, $6)
+             RETURNING id, name, email, phone, department, designation, created_at, updated_at`,
             [
                 name.trim(),
                 email.trim().toLowerCase(),
+                passwordHash,
                 phone || null,
                 department || null,
                 designation || null
@@ -51,13 +87,141 @@ export const createEmployee = async (req, res) => {
     }
 };
 
+// LOGIN EMPLOYEE
+export const loginEmployee = async (req, res) => {
+    try {
+        const { email, password } = req.body;
+
+        if (!email || !password) {
+            return res.status(400).json({
+                message: "Email and password are required"
+            });
+        }
+
+        if (typeof email !== "string" || typeof password !== "string") {
+            return res.status(400).json({
+                message: "Invalid input"
+            });
+        }
+
+        const result = await pool.query(
+            `SELECT id, name, email, password_hash
+             FROM employees
+             WHERE email = $1`,
+            [email.trim().toLowerCase()]
+        );
+
+        if (result.rows.length === 0) {
+            return res.status(401).json({
+                message: "Invalid email or password"
+            });
+        }
+
+        const employee = result.rows[0];
+        const isPasswordValid = await bcrypt.compare(
+            password,
+            employee.password_hash
+        );
+
+        if (!isPasswordValid) {
+            return res.status(401).json({
+                message: "Invalid email or password"
+            });
+        }
+
+        const accessToken = generateAccessToken(employee.id);
+        const refreshToken = generateRefreshToken(employee.id);
+
+        await pool.query(
+            "UPDATE employees SET refresh_token = $1 WHERE id = $2",
+            [refreshToken, employee.id]
+        );
+
+        return res.status(200).json({
+            message: "Login successful",
+            accessToken,
+            refreshToken,
+            employee: {
+                id: employee.id,
+                name: employee.name,
+                email: employee.email
+            }
+        });
+    } catch (error) {
+        console.error("Employee login error:", error);
+
+        return res.status(500).json({
+            message: "Internal server error"
+        });
+    }
+};
+
+// LOGOUT EMPLOYEE
+export const logoutEmployee = async (req, res) => {
+    try {
+        const employeeId = req.user.userId;
+
+        await pool.query(
+            "UPDATE employees SET refresh_token = NULL WHERE id = $1",
+            [employeeId]
+        );
+
+        return res.status(200).json({
+            message: "Logout successful"
+        });
+    } catch (error) {
+        console.error("Employee logout error:", error);
+
+        return res.status(500).json({
+            message: "Internal server error"
+        });
+    }
+};
+
+// GET LOGGED-IN EMPLOYEE'S ASSETS
+export const getMyEmployeeAssets = async (req, res) => {
+    try {
+        const employeeId = req.user.userId;
+
+        const result = await pool.query(
+            `SELECT
+                a.*,
+                e.name AS employee_name
+             FROM assets a
+             INNER JOIN employees e ON e.id = a.employee_id
+             WHERE a.employee_id = $1
+             ORDER BY a.id DESC`,
+            [employeeId]
+        );
+
+        return res.status(200).json({
+            success: true,
+            assets: result.rows
+        });
+    } catch (error) {
+        console.error("Get employee assets error:", error);
+
+        return res.status(500).json({
+            success: false,
+            message: "Failed to fetch employee assets"
+        });
+    }
+};
+
 
 // GET ALL EMPLOYEES
 export const getEmployees = async (req, res) => {
     try {
         const result = await pool.query(
             `SELECT
-                e.*,
+                e.id,
+                e.name,
+                e.email,
+                e.phone,
+                e.department,
+                e.designation,
+                e.created_at,
+                e.updated_at,
                 COUNT(a.id)::INTEGER AS asset_count
              FROM employees e
              LEFT JOIN assets a ON a.employee_id = e.id
@@ -91,7 +255,10 @@ export const getEmployeeById = async (req, res) => {
         }
 
         const result = await pool.query(
-            `SELECT * FROM employees WHERE id = $1`,
+            `SELECT id, name, email, phone, department, designation,
+                    created_at, updated_at
+             FROM employees
+             WHERE id = $1`,
             [id]
         );
 
@@ -157,7 +324,8 @@ export const updateEmployee = async (req, res) => {
                 designation = COALESCE($5, designation),
                 updated_at = CURRENT_TIMESTAMP
              WHERE id = $6
-             RETURNING *`,
+             RETURNING id, name, email, phone, department, designation,
+                       created_at, updated_at`,
             [
                 name?.trim() || null,
                 email?.trim().toLowerCase() || null,
@@ -198,7 +366,12 @@ export const updateEmployee = async (req, res) => {
 // GET EMPLOYEE WITH ASSIGNED ASSETS
 export const getEmployeeWithAssets = async (req, res) => {
     try {
-        const { id } = req.params;
+        const requestedId = req.params.id;
+        const id = requestedId === "me"
+            ? req.user.userId
+            : req.user.role === "employee"
+                ? req.user.userId
+                : requestedId;
 
         if (!Number.isInteger(Number(id)) || Number(id) <= 0) {
             return res.status(400).json({
@@ -207,7 +380,10 @@ export const getEmployeeWithAssets = async (req, res) => {
         }
 
         const employeeResult = await pool.query(
-            `SELECT * FROM employees WHERE id = $1`,
+            `SELECT id, name, email, phone, department, designation,
+                    created_at, updated_at
+             FROM employees
+             WHERE id = $1`,
             [id]
         );
 
