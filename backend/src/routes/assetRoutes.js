@@ -1,6 +1,7 @@
 import express from "express";
 
 import {
+    getMyAssets,
     getAllAssets,
     getAssetById,
     createAsset,
@@ -12,6 +13,7 @@ import {authMiddleware} from "../middlewares/authMiddleware.js";
 
 const router = express.Router();
 
+router.get("/my", authMiddleware, getMyAssets);
 router.get("/", authMiddleware, getAllAssets);
 
 router.get("/:id", authMiddleware, getAssetById);
